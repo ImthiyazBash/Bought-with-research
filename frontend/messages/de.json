@@ -1,0 +1,189 @@
+{
+  "nav": {
+    "title": "Bought",
+    "signIn": "Anmelden"
+  },
+  "common": {
+    "years": "Jahre",
+    "loading": "Laden",
+    "error": "Fehler",
+    "na": "k.A.",
+    "tryAgain": "Erneut versuchen"
+  },
+  "search": {
+    "placeholder": "Unternehmen suchen...",
+    "filters": "Filter",
+    "clearAll": "Filter zurücksetzen",
+    "allCities": "Alle Städte",
+    "noResults": "Keine Unternehmen gefunden",
+    "noResultsDescription": "Versuchen Sie, Ihre Filter anzupassen, um mehr Ergebnisse zu sehen.",
+    "resultsCount": "{count} Unternehmen",
+    "resultsCountFiltered": "{filtered} von {total} Unternehmen",
+    "listView": "Listenansicht",
+    "mapView": "Kartenansicht"
+  },
+  "filters": {
+    "employees": "Arbeitnehmer",
+    "equity": "Eigenkapital",
+    "income": "Jahresüberschuss",
+    "city": "Stadt",
+    "sector": "Branche",
+    "allSectors": "Alle Branchen",
+    "minScore": "Mindest-Nachfolge-Score",
+    "scoreDescription": "Höhere Werte deuten auf einen höheren Nachfolgebedarf hin (10 = Alter 65+, 7-9 = Alter 55-64, 1-6 = Alter <55)"
+  },
+  "score": {
+    "label": "Nachfolge-Score",
+    "legend": "Nachfolge-Score",
+    "high": "Score 10 (Alter 65+)",
+    "medium": "Score 7-9 (Alter 55-64)",
+    "low": "Score 1-6 (Alter <55)",
+    "indicators": "Nachfolge-Score Indikatoren",
+    "highCount": "{count} Score 10",
+    "mediumCount": "{count} Score 7-9"
+  },
+  "company": {
+    "card": {
+      "equity": "Eigenkapital",
+      "totalAssets": "Bilanzsumme",
+      "netIncome": "Jahresüberschuss",
+      "employees": "Arbeitnehmer",
+      "dataFrom": "Daten von {year}",
+      "viewDetails": "Details anzeigen"
+    },
+    "detail": {
+      "backToListings": "Zurück zur Übersicht",
+      "companyDetails": "Unternehmensdetails",
+      "location": "Standort",
+      "dataYear": "Geschäftsjahr",
+      "corporatePurpose": "Unternehmensgegenstand",
+      "lastOwnershipChange": "Letzter Inhaberwechsel",
+      "yearsAgo": "vor {years} Jahren",
+      "receivables": "Forderungen",
+      "cashAssets": "Flüssige Mittel",
+      "liabilities": "Verbindlichkeiten",
+      "retainedEarnings": "Bilanzgewinn",
+      "viewOnGoogleMaps": "Auf Google Maps anzeigen",
+      "interested": "Interessiert an dieser Möglichkeit?",
+      "interestedDescription": "Kontaktieren Sie uns, um mehr über diese Nachfolgemöglichkeit zu erfahren.",
+      "requestInfo": "Informationen anfordern",
+      "notFound": "Unternehmen nicht gefunden",
+      "notFoundDescription": "Dieses Unternehmen existiert nicht.",
+      "backToHome": "Zurück zur Startseite",
+      "loadingDetails": "Unternehmensdetails werden geladen...",
+      "yearsSinceChange": "{years} Jahre seit Wechsel",
+      "unnamedCompany": "Unbenanntes Unternehmen"
+    }
+  },
+  "shareholders": {
+    "title": "Gesellschafter",
+    "noData": "Keine Gesellschafterinformationen verfügbar.",
+    "highOpportunity": "Hohe Nachfolgechance",
+    "highOpportunityDescriptionSingle": "Ein Gesellschafter ist über 65 Jahre alt, was auf potenziellen Nachfolgeplanungsbedarf hindeutet.",
+    "highOpportunityDescriptionMultiple": "{count} Gesellschafter sind über 65 Jahre alt, was auf starken Nachfolgeplanungsbedarf hindeutet.",
+    "ownershipDistribution": "Verteilung der Eigentumsanteile",
+    "shareholderDetails": "Gesellschafterdetails",
+    "name": "Name",
+    "ownership": "Anteil",
+    "dateOfBirth": "Geburtsdatum",
+    "age": "Alter",
+    "unknown": "Unbekannt"
+  },
+  "map": {
+    "geocoding": "Adressen werden geokodiert...",
+    "noAddressData": "Keine Adressdaten verfügbar",
+    "noAddressDataDescription": "Unternehmen benötigen address_street, address_zip und address_city in der Datenbank für die Geokodierung.",
+    "partialData": "Zeige {shown} von {total} Unternehmen (fehlende Adressdaten)"
+  },
+  "charts": {
+    "financialOverview": "Finanzübersicht",
+    "noHistoricalData": "Keine historischen Daten verfügbar",
+    "noHistoricalDataDescription": "Finanzielle Trends erfordern mehrjährige Daten.",
+    "equity": "Eigenkapital",
+    "totalAssets": "Bilanzsumme",
+    "netIncome": "Jahresüberschuss",
+    "amount": "Betrag (EUR)",
+    "balanceSheetStructure": "Bilanzstruktur",
+    "liabilities": "Verbindlichkeiten",
+    "assetBreakdown": "Aufschlüsselung der Aktiva",
+    "profitabilityMetrics": "Rentabilitätskennzahlen"
+  },
+  "modal": {
+    "requestInfo": {
+      "title": "Informationen anfordern",
+      "subtitle": "Interessiert an {company}? Hinterlassen Sie Ihre E-Mail und wir melden uns bei Ihnen.",
+      "emailLabel": "E-Mail-Adresse",
+      "emailPlaceholder": "ihre.email@beispiel.de",
+      "submit": "Anfrage senden",
+      "submitting": "Wird gesendet...",
+      "successTitle": "Vielen Dank!",
+      "successMessage": "Wir haben Ihre Anfrage erhalten und werden uns bald bei Ihnen melden.",
+      "stayTuned": "Bleiben Sie dran!"
+    }
+  },
+  "research": {
+    "title": "Unternehmensrecherche",
+    "subtitle": "Website-Analyse, Medienberichte und Gesellschafter-Hintergrundprüfung",
+    "start": "Recherche starten",
+    "refresh": "Recherche aktualisieren",
+    "researching": "Wird recherchiert...",
+    "inProgress": "Recherche läuft...",
+    "completed": "Daten verfügbar",
+    "lastUpdated": "Zuletzt aktualisiert",
+    "staleWarning": "Daten möglicherweise veraltet",
+    "tabs": {
+      "website": "Website-Profil",
+      "media": "Medien & Nachrichten",
+      "shareholders": "Gesellschafter-Hintergrund"
+    },
+    "website": {
+      "crawling": "Website wird analysiert...",
+      "crawlingDescription": "Website wird gefunden, Impressum gelesen, Daten extrahiert",
+      "notFound": "Keine Website gefunden",
+      "notFoundDescription": "Wir konnten keine Website für dieses Unternehmen finden.",
+      "failed": "Website-Analyse fehlgeschlagen",
+      "emptyTitle": "Noch keine Website-Daten",
+      "emptyDescription": "Starten Sie die Recherche, um die Unternehmenswebsite zu finden, Impressumsdaten zu extrahieren, Teammitglieder zu identifizieren und Produkte/Dienstleistungen zu ermitteln.",
+      "discover": "Website finden",
+      "productsServices": "Produkte & Dienstleistungen",
+      "impressum": "Impressumsdaten",
+      "managingDirector": "Geschäftsführer",
+      "hrbNumber": "HRB-Nummer",
+      "court": "Registergericht",
+      "vatId": "USt-IdNr.",
+      "viewImpressum": "Impressum anzeigen",
+      "contact": "Kontakt & Social Media",
+      "noContactFound": "Keine Kontaktdaten gefunden",
+      "teamMembers": "Gefundene Teammitglieder"
+    },
+    "media": {
+      "emptyTitle": "Noch keine Medienerwähnungen",
+      "emptyDescription": "Starten Sie die Recherche, um nach Nachrichtenartikeln, Pressemitteilungen und öffentlichen Erwähnungen dieses Unternehmens und seiner Gesellschafter zu suchen.",
+      "search": "Medien durchsuchen",
+      "searchedAt": "Gesucht am",
+      "resultsFound": "Ergebnisse gefunden",
+      "noResults": "Keine Erwähnungen für diesen Filter.",
+      "filterAll": "Alle",
+      "filterCompany": "Unternehmen",
+      "filterShareholder": "Gesellschafter",
+      "filterIndustry": "Branche"
+    },
+    "shareholders": {
+      "emptyTitle": "Noch keine Gesellschafter-Recherche",
+      "emptyDescription": "Starten Sie die Recherche, um weitere Unternehmen, Handelsregistereinträge, LinkedIn-Profile und Querverweise für jeden Gesellschafter zu finden.",
+      "investigate": "Gesellschafter untersuchen",
+      "investigated": "Gesellschafter untersucht",
+      "crossRefsFound": "Querverweise gefunden",
+      "entityType": "Unternehmen",
+      "otherCompanies": "weitere Unternehmen",
+      "crossRefs": "Querverweis",
+      "pending": "Wird recherchiert...",
+      "failed": "Fehlgeschlagen",
+      "crossReferencesTitle": "Auch in Ihrer Datenbank vorhanden",
+      "relatedInfo": "Verwandte Informationen",
+      "otherCompaniesTitle": "Weitere Geschäftstätigkeiten",
+      "handelsregister": "Handelsregistereinträge",
+      "enrichedAt": "Daten erhoben am"
+    }
+  }
+}

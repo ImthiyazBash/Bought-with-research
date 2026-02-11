@@ -1,0 +1,189 @@
+{
+  "nav": {
+    "title": "Bought",
+    "signIn": "Sign In"
+  },
+  "common": {
+    "years": "years",
+    "loading": "Loading",
+    "error": "Error",
+    "na": "N/A",
+    "tryAgain": "Try Again"
+  },
+  "search": {
+    "placeholder": "Search companies...",
+    "filters": "Filters",
+    "clearAll": "Clear all filters",
+    "allCities": "All Cities",
+    "noResults": "No companies found",
+    "noResultsDescription": "Try adjusting your filters to see more results.",
+    "resultsCount": "{count} companies",
+    "resultsCountFiltered": "{filtered} of {total} companies",
+    "listView": "List View",
+    "mapView": "Map View"
+  },
+  "filters": {
+    "employees": "Employees",
+    "equity": "Equity",
+    "income": "Net Income",
+    "city": "City",
+    "sector": "Sector",
+    "allSectors": "All Sectors",
+    "minScore": "Minimum Succession Score",
+    "scoreDescription": "Higher scores indicate greater succession opportunity (10 = age 65+, 7-9 = age 55-64, 1-6 = age <55)"
+  },
+  "score": {
+    "label": "Succession Score",
+    "legend": "Succession Score",
+    "high": "Score 10 (Age 65+)",
+    "medium": "Score 7-9 (Age 55-64)",
+    "low": "Score 1-6 (Age <55)",
+    "indicators": "Succession Score Indicators",
+    "highCount": "{count} Score 10",
+    "mediumCount": "{count} Score 7-9"
+  },
+  "company": {
+    "card": {
+      "equity": "Equity",
+      "totalAssets": "Total Assets",
+      "netIncome": "Net Income",
+      "employees": "Employees",
+      "dataFrom": "Data from {year}",
+      "viewDetails": "View Details"
+    },
+    "detail": {
+      "backToListings": "Back to listings",
+      "companyDetails": "Company Details",
+      "location": "Location",
+      "dataYear": "Data Year",
+      "corporatePurpose": "Corporate Purpose",
+      "lastOwnershipChange": "Last Ownership Change",
+      "yearsAgo": "{years} years ago",
+      "receivables": "Receivables",
+      "cashAssets": "Cash Assets",
+      "liabilities": "Liabilities",
+      "retainedEarnings": "Retained Earnings",
+      "viewOnGoogleMaps": "View on Google Maps",
+      "interested": "Interested in this opportunity?",
+      "interestedDescription": "Contact us to learn more about this succession opportunity.",
+      "requestInfo": "Request Information",
+      "notFound": "Company Not Found",
+      "notFoundDescription": "This company does not exist.",
+      "backToHome": "Back to Home",
+      "loadingDetails": "Loading company details...",
+      "yearsSinceChange": "{years} years since ownership change",
+      "unnamedCompany": "Unnamed Company"
+    }
+  },
+  "shareholders": {
+    "title": "Shareholders",
+    "noData": "No shareholder information available.",
+    "highOpportunity": "High Succession Opportunity",
+    "highOpportunityDescriptionSingle": "One shareholder is 65+ years old, indicating potential succession planning needs.",
+    "highOpportunityDescriptionMultiple": "{count} shareholders are 65+ years old, indicating strong succession planning needs.",
+    "ownershipDistribution": "Ownership Distribution",
+    "shareholderDetails": "Shareholder Details",
+    "name": "Name",
+    "ownership": "Ownership",
+    "dateOfBirth": "Date of Birth",
+    "age": "Age",
+    "unknown": "Unknown"
+  },
+  "map": {
+    "geocoding": "Geocoding addresses...",
+    "noAddressData": "No Address Data Available",
+    "noAddressDataDescription": "Companies need address_street, address_zip, and address_city populated in the database for geocoding.",
+    "partialData": "Showing {shown} of {total} companies (missing address data)"
+  },
+  "charts": {
+    "financialOverview": "Financial Overview",
+    "noHistoricalData": "No historical data available",
+    "noHistoricalDataDescription": "Financial trends require multiple years of data.",
+    "equity": "Equity",
+    "totalAssets": "Total Assets",
+    "netIncome": "Net Income",
+    "amount": "Amount (EUR)",
+    "balanceSheetStructure": "Balance Sheet Structure",
+    "liabilities": "Liabilities",
+    "assetBreakdown": "Asset Breakdown",
+    "profitabilityMetrics": "Profitability Metrics"
+  },
+  "modal": {
+    "requestInfo": {
+      "title": "Request Information",
+      "subtitle": "Interested in {company}? Leave your email and we'll get in touch.",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "your.email@example.com",
+      "submit": "Submit Request",
+      "submitting": "Submitting...",
+      "successTitle": "Thank you!",
+      "successMessage": "We've received your inquiry and will contact you soon.",
+      "stayTuned": "Stay tuned!"
+    }
+  },
+  "research": {
+    "title": "Company Research",
+    "subtitle": "Website crawl, media mentions, and shareholder background checks",
+    "start": "Start Research",
+    "refresh": "Refresh Research",
+    "researching": "Researching...",
+    "inProgress": "Researching...",
+    "completed": "Data Available",
+    "lastUpdated": "Last updated",
+    "staleWarning": "Data may be outdated",
+    "tabs": {
+      "website": "Website Profile",
+      "media": "Media & News",
+      "shareholders": "Shareholder Background"
+    },
+    "website": {
+      "crawling": "Crawling website...",
+      "crawlingDescription": "Discovering website, reading Impressum, extracting data",
+      "notFound": "No website found",
+      "notFoundDescription": "We could not find a website for this company.",
+      "failed": "Website crawl failed",
+      "emptyTitle": "No website data yet",
+      "emptyDescription": "Run research to discover the company website, extract Impressum data, find team members, and identify products/services.",
+      "discover": "Discover Website",
+      "productsServices": "Products & Services",
+      "impressum": "Impressum Data",
+      "managingDirector": "Managing Director",
+      "hrbNumber": "HRB Number",
+      "court": "Registry Court",
+      "vatId": "VAT ID",
+      "viewImpressum": "View Impressum",
+      "contact": "Contact & Social",
+      "noContactFound": "No contact information found",
+      "teamMembers": "Team Members Found"
+    },
+    "media": {
+      "emptyTitle": "No media mentions yet",
+      "emptyDescription": "Run research to search for news articles, press releases, and public mentions of this company and its shareholders.",
+      "search": "Search Media",
+      "searchedAt": "Searched",
+      "resultsFound": "results found",
+      "noResults": "No mentions match this filter.",
+      "filterAll": "All",
+      "filterCompany": "Company",
+      "filterShareholder": "Shareholder",
+      "filterIndustry": "Industry"
+    },
+    "shareholders": {
+      "emptyTitle": "No shareholder research yet",
+      "emptyDescription": "Run research to discover other companies, Handelsregister entries, LinkedIn profiles, and cross-references for each shareholder.",
+      "investigate": "Investigate Shareholders",
+      "investigated": "shareholders investigated",
+      "crossRefsFound": "Cross-references found",
+      "entityType": "Company",
+      "otherCompanies": "other companies",
+      "crossRefs": "cross-ref",
+      "pending": "Researching...",
+      "failed": "Failed",
+      "crossReferencesTitle": "Also appears in your database",
+      "relatedInfo": "Related Information",
+      "otherCompaniesTitle": "Other Business Activities",
+      "handelsregister": "Handelsregister Entries",
+      "enrichedAt": "Data collected"
+    }
+  }
+}
