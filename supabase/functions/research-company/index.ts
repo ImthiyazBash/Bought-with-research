@@ -714,6 +714,26 @@ async function researchMedia(supabase: any, company: Company) {
       }
     }
 
+    // LLM summary of all media mentions
+    let mediaSummary: string | null = null;
+    if (allMentions.length > 0) {
+      const mentionSnippets = allMentions
+        .map((m) => `[${m.mention_type.toUpperCase()}] ${m.title}${m.source ? ` (${m.source})` : ""}${m.snippet ? `: ${m.snippet}` : ""}`)
+        .join("\n");
+
+      mediaSummary = await summarizeWithLLM(
+        `Here are ${allMentions.length} search results about "${companyName}" (${city}, Germany) and its shareholders:\n\n${mentionSnippets}`,
+        `You are analyzing media mentions and web search results about a German company.
+Write a concise 3-5 sentence summary covering:
+1. The company's public presence and reputation
+2. Any notable news, awards, or events
+3. Key findings about shareholders if relevant results exist
+
+If results are mostly directory listings or basic company pages, note that the company has a low media profile.
+Write in English. Be factual and specific. Plain text only, no markdown.`
+      );
+    }
+
     // Update search status
     await supabase.from("company_media_searches").upsert(
       {
@@ -721,6 +741,7 @@ async function researchMedia(supabase: any, company: Company) {
         search_status: "completed",
         search_error: null,
         mentions_found: allMentions.length,
+        media_summary: mediaSummary,
         last_searched_at: new Date().toISOString(),
       },
       { onConflict: "company_id" }
@@ -935,6 +956,27 @@ Deno.serve(async (req) => {
   try {
     const { company_id, modules = ["website", "media", "shareholders"] } =
       await req.json();
+
+    // Migration mode: add new columns via raw postgres
+    if (modules.includes("migrate")) {
+      try {
+        const dbUrl = Deno.env.get("SUPABASE_DB_URL");
+        if (!dbUrl) {
+          return new Response(JSON.stringify({ error: "SUPABASE_DB_URL not set" }),
+            { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+        // Use the postgres module available in Deno
+        const { default: postgres } = await import("https://deno.land/x/postgresjs@v3.4.5/mod.js");
+        const sql = postgres(dbUrl);
+        await sql`ALTER TABLE company_media_searches ADD COLUMN IF NOT EXISTS media_summary TEXT`;
+        await sql.end();
+        return new Response(JSON.stringify({ migrate: "success", added: "media_summary column" }),
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      } catch (err) {
+        return new Response(JSON.stringify({ migrate: "failed", error: String(err) }),
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+    }
 
     // Diagnostic mode: test Gemini API
     if (modules.includes("diagnose")) {

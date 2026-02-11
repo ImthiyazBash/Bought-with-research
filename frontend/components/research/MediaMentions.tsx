@@ -113,6 +113,25 @@ export default function MediaMentions({
         ))}
       </div>
 
+      {/* AI Summary */}
+      {searchStatus?.media_summary && (
+        <div className="bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-100 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-5 h-5 rounded-md bg-indigo-100 flex items-center justify-center">
+              <svg className="w-3 h-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <h4 className="text-xs font-semibold text-indigo-900 uppercase tracking-wide">
+              {t('research.media.summary') || 'AI Summary'}
+            </h4>
+          </div>
+          <p className="text-sm text-gray-700 leading-relaxed">
+            {searchStatus.media_summary}
+          </p>
+        </div>
+      )}
+
       {/* Search Info */}
       {searchStatus?.last_searched_at && (
         <p className="text-xs text-gray-400">

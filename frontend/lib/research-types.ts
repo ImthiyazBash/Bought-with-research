@@ -70,6 +70,7 @@ export interface MediaSearchStatus {
   search_status: 'pending' | 'searching' | 'completed' | 'failed';
   search_error: string | null;
   mentions_found: number;
+  media_summary: string | null;
   last_searched_at: string | null;
 }
 
