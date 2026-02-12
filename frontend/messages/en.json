@@ -72,7 +72,8 @@
       "backToHome": "Back to Home",
       "loadingDetails": "Loading company details...",
       "yearsSinceChange": "{years} years since ownership change",
-      "unnamedCompany": "Unnamed Company"
+      "unnamedCompany": "Unnamed Company",
+      "contact": "Contact Information"
     }
   },
   "shareholders": {

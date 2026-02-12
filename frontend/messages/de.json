@@ -72,7 +72,8 @@
       "backToHome": "Zurück zur Startseite",
       "loadingDetails": "Unternehmensdetails werden geladen...",
       "yearsSinceChange": "{years} Jahre seit Wechsel",
-      "unnamedCompany": "Unbenanntes Unternehmen"
+      "unnamedCompany": "Unbenanntes Unternehmen",
+      "contact": "Kontaktinformationen"
     }
   },
   "shareholders": {

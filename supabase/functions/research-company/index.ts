@@ -28,6 +28,10 @@ interface Company {
   shareholder_names: string | null;
   shareholder_dobs: string | null;
   wz_description: string | null;
+  tel: string | null;
+  fax: string | null;
+  email: string | null;
+  website: string | null;
 }
 
 interface ShareholderDetail {
@@ -305,6 +309,7 @@ async function researchWebsite(supabase: any, company: Company) {
   const companyId = company.id;
   const companyName = company.company_name || "";
   const city = company.address_city || "";
+  const knownWebsite = company.website || null;
 
   // Update status
   await supabase
@@ -315,66 +320,98 @@ async function researchWebsite(supabase: any, company: Company) {
     );
 
   try {
-    // Step 1: Search with full Serper data (includes sitelinks)
-    const searchQuery = `"${companyName}" ${city}`;
-    const rawResults = await webSearchRaw(searchQuery, 10);
+    let websiteUrl: string;
+    let domain: string;
+    let sitelinks: { title: string; link: string }[] = [];
+    let searchResults: any[] = [];
 
-    if (rawResults.organic.length === 0) {
-      await supabase
-        .from("company_website_profiles")
-        .upsert(
-          {
-            company_id: companyId,
-            crawl_status: "not_found",
-            crawl_error: "No search results found",
-            search_results: [],
-            crawled_at: new Date().toISOString(),
-          },
-          { onConflict: "company_id" }
-        );
-      return;
-    }
+    if (knownWebsite) {
+      // ── Path A: Website URL is known from Hamburg Targets ──
+      console.log(`Using known website URL: ${knownWebsite}`);
+      websiteUrl = knownWebsite.startsWith("http") ? knownWebsite : `https://${knownWebsite}`;
+      domain = new URL(websiteUrl).hostname;
 
-    // Store all search results for the frontend
-    const searchResults = rawResults.organic.map((r) => ({
-      title: r.title,
-      link: r.link,
-      snippet: r.snippet,
-      position: r.position,
-      sitelinks: r.sitelinks || [],
-    }));
+      // Still do Serper search for web presence data
+      const searchQuery = `"${companyName}" ${city}`;
+      const rawResults = await webSearchRaw(searchQuery, 10);
+      searchResults = rawResults.organic.map((r) => ({
+        title: r.title,
+        link: r.link,
+        snippet: r.snippet,
+        position: r.position,
+        sitelinks: r.sitelinks || [],
+      }));
 
-    // Step 2: Pick the company's own website (skip aggregators)
-    const nameParts = companyName
-      .toLowerCase()
-      .replace(/gmbh|ag|kg|ohg|e\.v\.|mbh|co\.|&|g\.m\.b\.h\./gi, "")
-      .trim()
-      .split(/\s+/)
-      .filter((p) => p.length > 2);
-
-    let bestResult = rawResults.organic[0];
-
-    // First pass: find a non-aggregator domain that matches the company name
-    for (const result of rawResults.organic) {
-      const hostname = new URL(result.link).hostname.toLowerCase();
-      const isAggregator = AGGREGATOR_DOMAINS.some((d) => hostname.includes(d));
-      if (!isAggregator && nameParts.some((part) => hostname.includes(part))) {
-        bestResult = result;
-        break;
+      // Check if any search result matches the known domain for sitelinks
+      const matchingResult = rawResults.organic.find((r) => {
+        try {
+          return new URL(r.link).hostname.includes(domain.replace("www.", ""));
+        } catch { return false; }
+      });
+      if (matchingResult) {
+        sitelinks = matchingResult.sitelinks || [];
       }
+    } else {
+      // ── Path B: Discover website via Serper (original flow) ──
+      const searchQuery = `"${companyName}" ${city}`;
+      const rawResults = await webSearchRaw(searchQuery, 10);
+
+      if (rawResults.organic.length === 0) {
+        await supabase
+          .from("company_website_profiles")
+          .upsert(
+            {
+              company_id: companyId,
+              crawl_status: "not_found",
+              crawl_error: "No search results found",
+              search_results: [],
+              crawled_at: new Date().toISOString(),
+            },
+            { onConflict: "company_id" }
+          );
+        return;
+      }
+
+      searchResults = rawResults.organic.map((r) => ({
+        title: r.title,
+        link: r.link,
+        snippet: r.snippet,
+        position: r.position,
+        sitelinks: r.sitelinks || [],
+      }));
+
+      // Pick the company's own website (skip aggregators)
+      const nameParts = companyName
+        .toLowerCase()
+        .replace(/gmbh|ag|kg|ohg|e\.v\.|mbh|co\.|&|g\.m\.b\.h\./gi, "")
+        .trim()
+        .split(/\s+/)
+        .filter((p) => p.length > 2);
+
+      let bestResult = rawResults.organic[0];
+
+      for (const result of rawResults.organic) {
+        const hostname = new URL(result.link).hostname.toLowerCase();
+        const isAggregator = AGGREGATOR_DOMAINS.some((d) => hostname.includes(d));
+        if (!isAggregator && nameParts.some((part) => hostname.includes(part))) {
+          bestResult = result;
+          break;
+        }
+      }
+
+      if (AGGREGATOR_DOMAINS.some((d) => new URL(bestResult.link).hostname.includes(d))) {
+        const nonAgg = rawResults.organic.find(
+          (r) => !AGGREGATOR_DOMAINS.some((d) => new URL(r.link).hostname.includes(d))
+        );
+        if (nonAgg) bestResult = nonAgg;
+      }
+
+      websiteUrl = bestResult.link;
+      domain = new URL(websiteUrl).hostname;
+      sitelinks = bestResult.sitelinks || [];
     }
 
-    // Fallback: first non-aggregator result
-    if (AGGREGATOR_DOMAINS.some((d) => new URL(bestResult.link).hostname.includes(d))) {
-      const nonAgg = rawResults.organic.find(
-        (r) => !AGGREGATOR_DOMAINS.some((d) => new URL(r.link).hostname.includes(d))
-      );
-      if (nonAgg) bestResult = nonAgg;
-    }
-
-    const websiteUrl = bestResult.link;
-    const domain = new URL(websiteUrl).hostname;
-    const sitelinks = bestResult.sitelinks || [];
+    // ── Common flow: Crawl & extract (runs for both paths) ──
 
     // Step 3: Crawl main page
     const mainPageText = await fetchPageText(websiteUrl);
@@ -475,14 +512,14 @@ async function researchWebsite(supabase: any, company: Company) {
 
     // Include search result snippets for richer context
     const snippetContext = searchResults
-      .map((r) => `${r.title}: ${r.snippet}`)
+      .map((r: any) => `${r.title}: ${r.snippet}`)
       .join("\n");
 
     const combinedText = [
       mainPageText.substring(0, 3000),
       aboutText.substring(0, 2000),
       kontaktText.substring(0, 500),
-      `\n--- Search result snippets ---\n${snippetContext}`,
+      snippetContext ? `\n--- Search result snippets ---\n${snippetContext}` : "",
     ]
       .filter(Boolean)
       .join("\n\n---\n\n");
@@ -523,9 +560,8 @@ async function researchWebsite(supabase: any, company: Company) {
     };
 
     const socialLinks: Record<string, string> = {};
-    // Check page text + search result URLs for social profiles
     const allText = mainPageText + " " + aboutText + " " + impressumText + " " +
-      kontaktText + " " + searchResults.map((r) => r.link).join(" ");
+      kontaktText + " " + searchResults.map((r: any) => r.link).join(" ");
     for (const [platform, pattern] of Object.entries(socialPatterns)) {
       const match = allText.match(pattern);
       if (match) {
@@ -533,7 +569,7 @@ async function researchWebsite(supabase: any, company: Company) {
       }
     }
 
-    // Step 10: Extract contact info from all crawled pages
+    // Step 10: Extract contact info — prefer Hamburg Targets data over regex extraction
     const fullText = mainPageText + " " + aboutText + " " + impressumText + " " + kontaktText;
     const emailMatch = fullText.match(/[\w.+-]+@[\w-]+\.[\w.-]+/);
     const phoneMatch = fullText.match(/(?:\+49|0049|0)\s*[\d\s/()-]{6,20}/);
@@ -548,8 +584,9 @@ async function researchWebsite(supabase: any, company: Company) {
         company_description: description || null,
         products_services: productsServices,
         team_members: teamMembers,
-        contact_email: emailMatch?.[0] || null,
-        contact_phone: phoneMatch?.[0]?.trim() || null,
+        contact_email: company.email || emailMatch?.[0] || null,
+        contact_phone: company.tel || phoneMatch?.[0]?.trim() || null,
+        contact_fax: company.fax || null,
         social_links: socialLinks,
         impressum_data: impressumData,
         search_results: searchResults,
@@ -969,8 +1006,9 @@ Deno.serve(async (req) => {
         const { default: postgres } = await import("https://deno.land/x/postgresjs@v3.4.5/mod.js");
         const sql = postgres(dbUrl);
         await sql`ALTER TABLE company_media_searches ADD COLUMN IF NOT EXISTS media_summary TEXT`;
+        await sql`ALTER TABLE company_website_profiles ADD COLUMN IF NOT EXISTS contact_fax TEXT`;
         await sql.end();
-        return new Response(JSON.stringify({ migrate: "success", added: "media_summary column" }),
+        return new Response(JSON.stringify({ migrate: "success", added: "media_summary + contact_fax columns" }),
           { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       } catch (err) {
         return new Response(JSON.stringify({ migrate: "failed", error: String(err) }),

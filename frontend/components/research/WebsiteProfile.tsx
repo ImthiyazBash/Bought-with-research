@@ -203,6 +203,12 @@ export default function WebsiteProfile({ profile, isResearching, onStartResearch
                 </a>
               </div>
             )}
+            {profile.contact_fax && (
+              <div className="flex items-center gap-2 text-sm">
+                <span className="text-gray-400">📠</span>
+                <span className="text-gray-700">{profile.contact_fax}</span>
+              </div>
+            )}
             {socialEntries.length > 0 && (
               <div className="flex flex-wrap gap-2 pt-2">
                 {socialEntries.map(([platform, url]) => {

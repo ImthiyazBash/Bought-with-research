@@ -21,6 +21,10 @@ export interface HamburgTarget {
   address_country: string | null;
   wz_code: string | null;
   wz_description: string | null;
+  tel: string | null;
+  fax: string | null;
+  email: string | null;
+  website: string | null;
 }
 
 export interface ShareholderDetail {

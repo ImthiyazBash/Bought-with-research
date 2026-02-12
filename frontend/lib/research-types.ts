@@ -11,6 +11,7 @@ export interface WebsiteProfile {
   team_members: TeamMember[];
   contact_email: string | null;
   contact_phone: string | null;
+  contact_fax: string | null;
   social_links: Record<string, string>;
   impressum_data: ImpressumData;
   crawl_status: 'pending' | 'crawling' | 'completed' | 'failed' | 'not_found';
