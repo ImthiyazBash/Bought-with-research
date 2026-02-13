@@ -1007,8 +1007,15 @@ Deno.serve(async (req) => {
         const sql = postgres(dbUrl);
         await sql`ALTER TABLE company_media_searches ADD COLUMN IF NOT EXISTS media_summary TEXT`;
         await sql`ALTER TABLE company_website_profiles ADD COLUMN IF NOT EXISTS contact_fax TEXT`;
+        await sql`ALTER TABLE "Hamburg Targets" ADD COLUMN IF NOT EXISTS source TEXT DEFAULT 'bundesanzeiger'`;
+        await sql`ALTER TABLE "Hamburg Targets" ADD COLUMN IF NOT EXISTS google_rating NUMERIC`;
+        await sql`ALTER TABLE "Hamburg Targets" ADD COLUMN IF NOT EXISTS google_reviews_count INTEGER`;
+        await sql`ALTER TABLE "Hamburg Targets" ADD COLUMN IF NOT EXISTS google_place_id TEXT`;
+        await sql`ALTER TABLE "Hamburg Targets" ADD COLUMN IF NOT EXISTS google_maps_url TEXT`;
+        await sql`ALTER TABLE "Hamburg Targets" ADD COLUMN IF NOT EXISTS business_type TEXT`;
+        await sql`SELECT setval(pg_get_serial_sequence('"Hamburg Targets"', 'id'), COALESCE((SELECT MAX(id) FROM "Hamburg Targets"), 1))`;
         await sql.end();
-        return new Response(JSON.stringify({ migrate: "success", added: "media_summary + contact_fax columns" }),
+        return new Response(JSON.stringify({ migrate: "success", added: "all columns including google places fields" }),
           { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       } catch (err) {
         return new Response(JSON.stringify({ migrate: "failed", error: String(err) }),
@@ -1047,6 +1054,181 @@ Deno.serve(async (req) => {
         JSON.stringify(diag, null, 2),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
+    }
+
+    // Google Places scan mode
+    if (modules.includes("scan-places")) {
+      const GOOGLE_PLACES_KEY = Deno.env.get("GOOGLE_PLACES_API_KEY") || "AIzaSyA6RQFPblplbL5GRe7nYTykWlJKSdL42y0";
+      const supabase = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      );
+
+      try {
+        // Fetch existing companies to deduplicate
+        const { data: existing } = await supabase
+          .from("Hamburg Targets")
+          .select("company_name, google_place_id");
+        const existingNames = new Set(
+          (existing || []).map((c: any) => c.company_name?.toLowerCase().trim()).filter(Boolean)
+        );
+        const existingPlaceIds = new Set(
+          (existing || []).map((c: any) => c.google_place_id).filter(Boolean)
+        );
+
+        // Search queries for different business types in Buxtehude
+        const searchQueries = [
+          "Handwerker in Buxtehude",
+          "Bäckerei in Buxtehude",
+          "Friseur in Buxtehude",
+          "Restaurant in Buxtehude",
+          "Autowerkstatt in Buxtehude",
+          "Elektriker in Buxtehude",
+          "Sanitär in Buxtehude",
+          "Malermeister in Buxtehude",
+          "Tischlerei in Buxtehude",
+          "Physiotherapie in Buxtehude",
+        ];
+
+        const allPlaces: any[] = [];
+        const seenPlaceIds = new Set<string>();
+
+        for (const query of searchQueries) {
+          try {
+            const res = await fetch(
+              "https://places.googleapis.com/v1/places:searchText",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-Goog-Api-Key": GOOGLE_PLACES_KEY,
+                  "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.nationalPhoneNumber,places.websiteUri,places.primaryType,places.primaryTypeDisplayName,places.rating,places.userRatingCount,places.businessStatus,places.googleMapsUri",
+                },
+                body: JSON.stringify({
+                  textQuery: query,
+                  locationBias: {
+                    circle: {
+                      center: { latitude: 53.4675, longitude: 9.6986 },
+                      radius: 5000.0,
+                    },
+                  },
+                  maxResultCount: 5,
+                  languageCode: "de",
+                }),
+              }
+            );
+
+            if (!res.ok) {
+              console.error(`Places API error for "${query}": ${res.status} ${await res.text()}`);
+              continue;
+            }
+
+            const data = await res.json();
+            const places = data.places || [];
+            console.log(`Query "${query}": ${places.length} results`);
+
+            for (const place of places) {
+              const placeId = place.id;
+              const name = place.displayName?.text || "";
+
+              // Skip duplicates
+              if (seenPlaceIds.has(placeId)) continue;
+              if (existingPlaceIds.has(placeId)) continue;
+              if (existingNames.has(name.toLowerCase().trim())) continue;
+
+              // Skip if name closely matches an existing company (fuzzy match)
+              const nameLower = name.toLowerCase().trim()
+                .replace(/gmbh|ag\b|kg\b|ohg|e\.v\.|mbh|co\.|&|g\.m\.b\.h\./gi, "")
+                .trim();
+              let isDuplicate = false;
+              for (const existingName of existingNames) {
+                const existingClean = (existingName as string)
+                  .replace(/gmbh|ag\b|kg\b|ohg|e\.v\.|mbh|co\.|&|g\.m\.b\.h\./gi, "")
+                  .trim();
+                if (existingClean && (nameLower.includes(existingClean) || existingClean.includes(nameLower))) {
+                  isDuplicate = true;
+                  break;
+                }
+              }
+              if (isDuplicate) continue;
+
+              seenPlaceIds.add(placeId);
+              allPlaces.push(place);
+            }
+          } catch (err) {
+            console.error(`Search failed for "${query}":`, err);
+          }
+
+          // Small delay between requests
+          await new Promise((r) => setTimeout(r, 200));
+        }
+
+        // Take up to 15 unique results
+        const toInsert = allPlaces.slice(0, 15);
+        console.log(`Found ${allPlaces.length} unique places, inserting ${toInsert.length}`);
+
+        const inserted: string[] = [];
+        const errors: string[] = [];
+        for (const place of toInsert) {
+          const address = place.formattedAddress || "";
+          // Parse German address: "Straße 123, 21614 Buxtehude, Germany"
+          const parts = address.split(",").map((p: string) => p.trim());
+          const street = parts[0] || null;
+          let zip = null;
+          let city = "Buxtehude";
+          if (parts[1]) {
+            const zipMatch = parts[1].match(/(\d{5})\s+(.*)/);
+            if (zipMatch) {
+              zip = zipMatch[1];
+              city = zipMatch[2] || "Buxtehude";
+            }
+          }
+
+          const row = {
+            company_name: place.displayName?.text || null,
+            address_street: street,
+            address_zip: zip,
+            address_city: city,
+            address_country: "Germany",
+            tel: place.nationalPhoneNumber || null,
+            website: place.websiteUri || null,
+            source: "google_places",
+            google_rating: place.rating || null,
+            google_reviews_count: place.userRatingCount || null,
+            google_place_id: place.id,
+            google_maps_url: place.googleMapsUri || null,
+            business_type: place.primaryTypeDisplayName?.text || place.primaryType || null,
+          };
+
+          const { error: insertError } = await supabase
+            .from("Hamburg Targets")
+            .insert(row);
+
+          if (insertError) {
+            console.error(`Failed to insert ${row.company_name}:`, insertError);
+            errors.push(`${row.company_name}: ${insertError.message}`);
+          } else {
+            inserted.push(row.company_name || "unknown");
+          }
+        }
+
+        return new Response(
+          JSON.stringify({
+            success: true,
+            total_found: allPlaces.length,
+            filtered_unique: toInsert.length,
+            inserted: inserted.length,
+            companies: inserted,
+            errors,
+          }, null, 2),
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      } catch (err) {
+        return new Response(
+          JSON.stringify({ error: "scan-places failed", details: String(err) }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
     }
 
     if (!company_id) {

@@ -49,6 +49,7 @@ export default function SearchFilters({
       minNachfolgeScore: 1,
       selectedCity: null,
       selectedSector: null,
+      selectedSource: null,
       highSuccessionRiskOnly: false,
     });
   };
@@ -63,7 +64,8 @@ export default function SearchFilters({
     filters.maxIncome < 10000000 ||
     filters.minNachfolgeScore > 1 ||
     filters.selectedCity !== null ||
-    filters.selectedSector !== null;
+    filters.selectedSector !== null ||
+    filters.selectedSource !== null;
 
   return (
     <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
@@ -185,6 +187,7 @@ export default function SearchFilters({
                   filters.minNachfolgeScore > 1,
                   filters.selectedCity !== null,
                   filters.selectedSector !== null,
+                  filters.selectedSource !== null,
                 ].filter(Boolean).length}
               </span>
             )}
@@ -201,26 +204,55 @@ export default function SearchFilters({
         {/* Expanded Filters */}
         {isExpanded && (
           <div className="mt-4 pt-4 border-t border-gray-100">
-            {/* Nachfolge-Score Filter */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('filters.minScore')}: {filters.minNachfolgeScore}/10
-              </label>
-              <div className="flex items-center gap-4">
-                <span className="text-xs text-gray-500">1</span>
-                <input
-                  type="range"
-                  min="1"
-                  max="10"
-                  value={filters.minNachfolgeScore}
-                  onChange={(e) => handleChange('minNachfolgeScore', parseInt(e.target.value))}
-                  className="flex-1 accent-primary"
-                />
-                <span className="text-xs text-gray-500">10</span>
+            {/* Source & Score Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              {/* Data Source Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('filters.source')}
+                </label>
+                <div className="flex gap-2">
+                  {[
+                    { value: null, label: t('filters.allSources') },
+                    { value: 'bundesanzeiger', label: t('company.detail.sourceBundesanzeiger') },
+                    { value: 'google_places', label: t('company.detail.sourceGooglePlaces') },
+                  ].map((option) => (
+                    <button
+                      key={option.value || 'all'}
+                      onClick={() => handleChange('selectedSource', option.value)}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
+                        filters.selectedSource === option.value
+                          ? 'bg-primary text-white border-primary'
+                          : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                {t('filters.scoreDescription')}
-              </p>
+
+              {/* Nachfolge-Score Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('filters.minScore')}: {filters.minNachfolgeScore}/10
+                </label>
+                <div className="flex items-center gap-4">
+                  <span className="text-xs text-gray-500">1</span>
+                  <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    value={filters.minNachfolgeScore}
+                    onChange={(e) => handleChange('minNachfolgeScore', parseInt(e.target.value))}
+                    className="flex-1 accent-primary"
+                  />
+                  <span className="text-xs text-gray-500">10</span>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  {t('filters.scoreDescription')}
+                </p>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

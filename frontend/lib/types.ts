@@ -25,6 +25,12 @@ export interface HamburgTarget {
   fax: string | null;
   email: string | null;
   website: string | null;
+  source: string | null;
+  google_rating: number | null;
+  google_reviews_count: number | null;
+  google_place_id: string | null;
+  google_maps_url: string | null;
+  business_type: string | null;
 }
 
 export interface ShareholderDetail {
@@ -61,6 +67,7 @@ export interface FilterState {
   minNachfolgeScore: number; // 1-10 scale
   selectedCity: string | null; // 'Hamburg', 'Buxtehude', or null for all
   selectedSector: string | null; // WZ sector key or null for all
+  selectedSource: string | null; // 'bundesanzeiger', 'google_places', or null for all
   /** @deprecated Use minNachfolgeScore instead */
   highSuccessionRiskOnly: boolean;
 }

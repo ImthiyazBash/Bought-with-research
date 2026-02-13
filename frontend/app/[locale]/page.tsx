@@ -24,6 +24,7 @@ const initialFilters: FilterState = {
   minNachfolgeScore: 1,
   selectedCity: null,
   selectedSector: null,
+  selectedSource: null,
   highSuccessionRiskOnly: false,
 };
 
@@ -74,6 +75,9 @@ function HomeContent() {
     const sector = searchParams.get('sector');
     if (sector) urlFilters.selectedSector = sector;
 
+    const source = searchParams.get('source');
+    if (source) urlFilters.selectedSource = source;
+
     setFilters(urlFilters);
   }, [searchParams]);
 
@@ -94,6 +98,7 @@ function HomeContent() {
     if (newFilters.minNachfolgeScore !== initialFilters.minNachfolgeScore) params.set('minScore', newFilters.minNachfolgeScore.toString());
     if (newFilters.selectedCity) params.set('city', newFilters.selectedCity);
     if (newFilters.selectedSector) params.set('sector', newFilters.selectedSector);
+    if (newFilters.selectedSource) params.set('source', newFilters.selectedSource);
 
     // Update URL without reloading page
     const queryString = params.toString();
@@ -208,6 +213,14 @@ function HomeContent() {
       if (filters.selectedSector) {
         const companySector = getWzSector(company.wz_code);
         if (companySector !== filters.selectedSector) {
+          return false;
+        }
+      }
+
+      // Source filter
+      if (filters.selectedSource) {
+        const companySource = company.source || 'bundesanzeiger';
+        if (companySource !== filters.selectedSource) {
           return false;
         }
       }

@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils';
 
 interface BadgeProps {
-  variant: 'high' | 'medium' | 'low' | 'neutral';
+  variant: 'high' | 'medium' | 'low' | 'neutral' | 'warning';
   children: React.ReactNode;
   className?: string;
 }
@@ -13,6 +13,7 @@ const variantStyles = {
   medium: 'bg-amber-100 text-amber-800 border-amber-200',
   low: 'bg-red-100 text-red-800 border-red-200',
   neutral: 'bg-gray-100 text-gray-800 border-gray-200',
+  warning: 'bg-yellow-50 text-yellow-800 border-yellow-200',
 };
 
 export default function Badge({ variant, children, className }: BadgeProps) {

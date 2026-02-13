@@ -30,7 +30,9 @@
     "sector": "Sector",
     "allSectors": "All Sectors",
     "minScore": "Minimum Succession Score",
-    "scoreDescription": "Higher scores indicate greater succession opportunity (10 = age 65+, 7-9 = age 55-64, 1-6 = age <55)"
+    "scoreDescription": "Higher scores indicate greater succession opportunity (10 = age 65+, 7-9 = age 55-64, 1-6 = age <55)",
+    "allSources": "All Sources",
+    "source": "Data Source"
   },
   "score": {
     "label": "Succession Score",
@@ -73,7 +75,11 @@
       "loadingDetails": "Loading company details...",
       "yearsSinceChange": "{years} years since ownership change",
       "unnamedCompany": "Unnamed Company",
-      "contact": "Contact Information"
+      "contact": "Contact Information",
+      "googleRating": "Google Rating",
+      "reviews": "reviews",
+      "sourceGooglePlaces": "Google Places",
+      "sourceBundesanzeiger": "Bundesanzeiger"
     }
   },
   "shareholders": {
