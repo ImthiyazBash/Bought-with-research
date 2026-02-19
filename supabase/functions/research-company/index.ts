@@ -1014,8 +1014,31 @@ Deno.serve(async (req) => {
         await sql`ALTER TABLE "Hamburg Targets" ADD COLUMN IF NOT EXISTS google_maps_url TEXT`;
         await sql`ALTER TABLE "Hamburg Targets" ADD COLUMN IF NOT EXISTS business_type TEXT`;
         await sql`SELECT setval(pg_get_serial_sequence('"Hamburg Targets"', 'id'), COALESCE((SELECT MAX(id) FROM "Hamburg Targets"), 1))`;
+
+        // Create Buxtehude Targets table (independent, for Google Places data)
+        await sql`CREATE TABLE IF NOT EXISTS "Buxtehude Targets" (
+          id SERIAL PRIMARY KEY,
+          created_at TIMESTAMPTZ DEFAULT now(),
+          company_name TEXT,
+          address_street TEXT,
+          address_zip TEXT,
+          address_city TEXT DEFAULT 'Buxtehude',
+          address_country TEXT DEFAULT 'Germany',
+          tel TEXT,
+          website TEXT,
+          email TEXT,
+          google_rating NUMERIC,
+          google_reviews_count INTEGER,
+          google_place_id TEXT UNIQUE,
+          google_maps_url TEXT,
+          business_type TEXT
+        )`;
+
+        // Remove any Google Places rows from Hamburg Targets (they belong in Buxtehude Targets now)
+        await sql`DELETE FROM "Hamburg Targets" WHERE source = 'google_places'`;
+
         await sql.end();
-        return new Response(JSON.stringify({ migrate: "success", added: "all columns including google places fields" }),
+        return new Response(JSON.stringify({ migrate: "success", added: "all columns + Buxtehude Targets table created + google_places rows cleaned from Hamburg Targets" }),
           { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       } catch (err) {
         return new Response(JSON.stringify({ migrate: "failed", error: String(err) }),
@@ -1056,7 +1079,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Google Places scan mode
+    // Google Places scan mode — inserts into "Buxtehude Targets" table
     if (modules.includes("scan-places")) {
       const GOOGLE_PLACES_KEY = Deno.env.get("GOOGLE_PLACES_API_KEY") || "AIzaSyA6RQFPblplbL5GRe7nYTykWlJKSdL42y0";
       const supabase = createClient(
@@ -1065,29 +1088,46 @@ Deno.serve(async (req) => {
       );
 
       try {
-        // Fetch existing companies to deduplicate
+        // Fetch existing entries from Buxtehude Targets to deduplicate
         const { data: existing } = await supabase
-          .from("Hamburg Targets")
+          .from("Buxtehude Targets")
           .select("company_name, google_place_id");
-        const existingNames = new Set(
-          (existing || []).map((c: any) => c.company_name?.toLowerCase().trim()).filter(Boolean)
-        );
         const existingPlaceIds = new Set(
           (existing || []).map((c: any) => c.google_place_id).filter(Boolean)
         );
 
-        // Search queries for different business types in Buxtehude
+        // Also fetch Hamburg Targets to skip those
+        const { data: htExisting } = await supabase
+          .from("Hamburg Targets")
+          .select("company_name");
+        const htNames = new Set(
+          (htExisting || []).map((c: any) => c.company_name?.toLowerCase().trim()).filter(Boolean)
+        );
+
+        // Comprehensive search queries for Buxtehude
         const searchQueries = [
-          "Handwerker in Buxtehude",
-          "Bäckerei in Buxtehude",
-          "Friseur in Buxtehude",
-          "Restaurant in Buxtehude",
-          "Autowerkstatt in Buxtehude",
-          "Elektriker in Buxtehude",
-          "Sanitär in Buxtehude",
-          "Malermeister in Buxtehude",
-          "Tischlerei in Buxtehude",
-          "Physiotherapie in Buxtehude",
+          "Restaurant Buxtehude",
+          "Cafe Buxtehude",
+          "Handwerker Buxtehude",
+          "Arzt Buxtehude",
+          "Zahnarzt Buxtehude",
+          "Apotheke Buxtehude",
+          "Rechtsanwalt Buxtehude",
+          "Steuerberater Buxtehude",
+          "Physiotherapie Buxtehude",
+          "Autowerkstatt Buxtehude",
+          "Friseur Buxtehude",
+          "Bäckerei Buxtehude",
+          "Metzgerei Buxtehude",
+          "Blumen Buxtehude",
+          "Fitnessstudio Buxtehude",
+          "Hotel Buxtehude",
+          "Supermarkt Buxtehude",
+          "Versicherung Buxtehude",
+          "Immobilien Buxtehude",
+          "Optiker Buxtehude",
+          "Geschäft Buxtehude",
+          "Dienstleistung Buxtehude",
         ];
 
         const allPlaces: any[] = [];
@@ -1112,7 +1152,7 @@ Deno.serve(async (req) => {
                       radius: 5000.0,
                     },
                   },
-                  maxResultCount: 5,
+                  maxResultCount: 20,
                   languageCode: "de",
                 }),
               }
@@ -1130,27 +1170,17 @@ Deno.serve(async (req) => {
             for (const place of places) {
               const placeId = place.id;
               const name = place.displayName?.text || "";
+              const address = place.formattedAddress || "";
 
-              // Skip duplicates
+              // Only include businesses actually in Buxtehude
+              if (!address.toLowerCase().includes("buxtehude")) continue;
+
+              // Skip duplicates within this scan
               if (seenPlaceIds.has(placeId)) continue;
+              // Skip if already in Buxtehude Targets
               if (existingPlaceIds.has(placeId)) continue;
-              if (existingNames.has(name.toLowerCase().trim())) continue;
-
-              // Skip if name closely matches an existing company (fuzzy match)
-              const nameLower = name.toLowerCase().trim()
-                .replace(/gmbh|ag\b|kg\b|ohg|e\.v\.|mbh|co\.|&|g\.m\.b\.h\./gi, "")
-                .trim();
-              let isDuplicate = false;
-              for (const existingName of existingNames) {
-                const existingClean = (existingName as string)
-                  .replace(/gmbh|ag\b|kg\b|ohg|e\.v\.|mbh|co\.|&|g\.m\.b\.h\./gi, "")
-                  .trim();
-                if (existingClean && (nameLower.includes(existingClean) || existingClean.includes(nameLower))) {
-                  isDuplicate = true;
-                  break;
-                }
-              }
-              if (isDuplicate) continue;
+              // Skip if name matches a Hamburg Targets company
+              if (htNames.has(name.toLowerCase().trim())) continue;
 
               seenPlaceIds.add(placeId);
               allPlaces.push(place);
@@ -1159,19 +1189,15 @@ Deno.serve(async (req) => {
             console.error(`Search failed for "${query}":`, err);
           }
 
-          // Small delay between requests
           await new Promise((r) => setTimeout(r, 200));
         }
 
-        // Take up to 15 unique results
-        const toInsert = allPlaces.slice(0, 15);
-        console.log(`Found ${allPlaces.length} unique places, inserting ${toInsert.length}`);
+        console.log(`Found ${allPlaces.length} unique Buxtehude places, inserting all`);
 
         const inserted: string[] = [];
         const errors: string[] = [];
-        for (const place of toInsert) {
+        for (const place of allPlaces) {
           const address = place.formattedAddress || "";
-          // Parse German address: "Straße 123, 21614 Buxtehude, Germany"
           const parts = address.split(",").map((p: string) => p.trim());
           const street = parts[0] || null;
           let zip = null;
@@ -1192,7 +1218,6 @@ Deno.serve(async (req) => {
             address_country: "Germany",
             tel: place.nationalPhoneNumber || null,
             website: place.websiteUri || null,
-            source: "google_places",
             google_rating: place.rating || null,
             google_reviews_count: place.userRatingCount || null,
             google_place_id: place.id,
@@ -1201,8 +1226,8 @@ Deno.serve(async (req) => {
           };
 
           const { error: insertError } = await supabase
-            .from("Hamburg Targets")
-            .insert(row);
+            .from("Buxtehude Targets")
+            .upsert(row, { onConflict: "google_place_id" });
 
           if (insertError) {
             console.error(`Failed to insert ${row.company_name}:`, insertError);
@@ -1216,7 +1241,6 @@ Deno.serve(async (req) => {
           JSON.stringify({
             success: true,
             total_found: allPlaces.length,
-            filtered_unique: toInsert.length,
             inserted: inserted.length,
             companies: inserted,
             errors,

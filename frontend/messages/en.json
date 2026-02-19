@@ -29,6 +29,8 @@
     "city": "City",
     "sector": "Sector",
     "allSectors": "All Sectors",
+    "sectorsSelected": "{count} selected",
+    "searchSectors": "Search sectors...",
     "minScore": "Minimum Succession Score",
     "scoreDescription": "Higher scores indicate greater succession opportunity (10 = age 65+, 7-9 = age 55-64, 1-6 = age <55)",
     "allSources": "All Sources",

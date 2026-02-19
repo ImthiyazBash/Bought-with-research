@@ -29,6 +29,8 @@
     "city": "Stadt",
     "sector": "Branche",
     "allSectors": "Alle Branchen",
+    "sectorsSelected": "{count} ausgewählt",
+    "searchSectors": "Branchen suchen...",
     "minScore": "Mindest-Nachfolge-Score",
     "scoreDescription": "Höhere Werte deuten auf einen höheren Nachfolgebedarf hin (10 = Alter 65+, 7-9 = Alter 55-64, 1-6 = Alter <55)",
     "allSources": "Alle Quellen",

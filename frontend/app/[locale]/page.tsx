@@ -5,7 +5,7 @@ import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { HamburgTarget, FilterState } from '@/lib/types';
 import { getCompanyNachfolgeScore } from '@/lib/utils';
-import { getWzSector } from '@/lib/wz-codes';
+import { wzCodeMatchesSelection } from '@/lib/wz-codes';
 import { useTranslations } from '@/lib/i18n-context';
 import CompanyCard from '@/components/CompanyCard';
 import CompanyMap from '@/components/CompanyMap';
@@ -24,6 +24,7 @@ const initialFilters: FilterState = {
   minNachfolgeScore: 1,
   selectedCity: null,
   selectedSector: null,
+  selectedWzCodes: [],
   selectedSource: null,
   highSuccessionRiskOnly: false,
 };
@@ -75,6 +76,9 @@ function HomeContent() {
     const sector = searchParams.get('sector');
     if (sector) urlFilters.selectedSector = sector;
 
+    const wz = searchParams.get('wz');
+    if (wz) urlFilters.selectedWzCodes = wz.split(',').filter(Boolean);
+
     const source = searchParams.get('source');
     if (source) urlFilters.selectedSource = source;
 
@@ -98,6 +102,7 @@ function HomeContent() {
     if (newFilters.minNachfolgeScore !== initialFilters.minNachfolgeScore) params.set('minScore', newFilters.minNachfolgeScore.toString());
     if (newFilters.selectedCity) params.set('city', newFilters.selectedCity);
     if (newFilters.selectedSector) params.set('sector', newFilters.selectedSector);
+    if (newFilters.selectedWzCodes.length > 0) params.set('wz', newFilters.selectedWzCodes.join(','));
     if (newFilters.selectedSource) params.set('source', newFilters.selectedSource);
 
     // Update URL without reloading page
@@ -209,10 +214,9 @@ function HomeContent() {
         return false;
       }
 
-      // Sector filter
-      if (filters.selectedSector) {
-        const companySector = getWzSector(company.wz_code);
-        if (companySector !== filters.selectedSector) {
+      // WZ code tree filter
+      if (filters.selectedWzCodes.length > 0) {
+        if (!wzCodeMatchesSelection(company.wz_code, filters.selectedWzCodes)) {
           return false;
         }
       }
@@ -293,6 +297,7 @@ function HomeContent() {
         onFiltersChange={updateFilters}
         totalCount={companies.length}
         filteredCount={filteredCompanies.length}
+        companies={companies}
       />
 
       {/* Mobile View Toggle - Only visible on mobile */}
