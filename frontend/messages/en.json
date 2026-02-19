@@ -1,7 +1,9 @@
 {
   "nav": {
     "title": "Bought",
-    "signIn": "Sign In"
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "saved": "Saved"
   },
   "common": {
     "years": "years",
@@ -129,6 +131,70 @@
       "successMessage": "We've received your inquiry and will contact you soon.",
       "stayTuned": "Stay tuned!"
     }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Sign In",
+      "subtitle": "Sign in to save companies and track succession opportunities.",
+      "email": "Email Address",
+      "emailPlaceholder": "your.email@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "submit": "Sign In",
+      "submitting": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Sign Up",
+      "error": "Invalid email or password. Please try again."
+    },
+    "signUp": {
+      "title": "Create Account",
+      "subtitle": "Join Bought to save companies and track succession opportunities.",
+      "displayName": "Display Name",
+      "displayNamePlaceholder": "Your name",
+      "email": "Email Address",
+      "emailPlaceholder": "your.email@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "Choose a password (min. 6 characters)",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Repeat your password",
+      "passwordMismatch": "Passwords do not match.",
+      "submit": "Create Account",
+      "submitting": "Creating account...",
+      "hasAccount": "Already have an account?",
+      "signInLink": "Sign In",
+      "success": "Account created! You can now sign in.",
+      "error": "Could not create account. Please try again."
+    }
+  },
+  "saved": {
+    "title": "Saved Companies",
+    "subtitle": "Companies you've bookmarked for further review.",
+    "empty": "No saved companies yet",
+    "emptyDescription": "Browse companies and click the heart icon to save them here.",
+    "browseCompanies": "Browse Companies"
+  },
+  "compare": {
+    "add": "Compare",
+    "title": "Company Comparison",
+    "subtitle": "Side-by-side comparison of selected companies.",
+    "selected": "{count} selected for comparison",
+    "clearAll": "Clear all",
+    "compareNow": "Compare Now",
+    "empty": "No companies selected",
+    "emptyDescription": "Select 2-4 companies from the listing to compare them side by side.",
+    "browseCompanies": "Browse Companies",
+    "needMore": "Select at least 2 companies to compare.",
+    "metric": "Metric",
+    "companyName": "Company Name",
+    "city": "City",
+    "employees": "Employees",
+    "equity": "Equity",
+    "totalAssets": "Total Assets",
+    "netIncome": "Net Income",
+    "wzCode": "WZ Code",
+    "successionScore": "Succession Score",
+    "shareholders": "Shareholders",
+    "reportYear": "Report Year"
   },
   "research": {
     "title": "Company Research",

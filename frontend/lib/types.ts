@@ -73,6 +73,20 @@ export interface FilterState {
   highSuccessionRiskOnly: boolean;
 }
 
+export interface Profile {
+  id: string;
+  display_name: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SavedCompany {
+  id: number;
+  user_id: string;
+  company_id: number;
+  created_at: string;
+}
+
 // Supabase Database types
 export interface Database {
   public: {
@@ -81,6 +95,16 @@ export interface Database {
         Row: HamburgTarget;
         Insert: Omit<HamburgTarget, 'id' | 'created_at'>;
         Update: Partial<Omit<HamburgTarget, 'id' | 'created_at'>>;
+      };
+      profiles: {
+        Row: Profile;
+        Insert: Omit<Profile, 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<Profile, 'id' | 'created_at'>>;
+      };
+      saved_companies: {
+        Row: SavedCompany;
+        Insert: Omit<SavedCompany, 'id' | 'created_at'>;
+        Update: Partial<Omit<SavedCompany, 'id' | 'created_at'>>;
       };
     };
   };

@@ -8,6 +8,8 @@ import { HamburgTarget } from '@/lib/types';
 import { formatCurrency, formatNumber, getFullAddress, getCompanyNachfolgeScore, getScoreVariant } from '@/lib/utils';
 import { getWzDescription } from '@/lib/wz-codes';
 import { useTranslations } from '@/lib/i18n-context';
+import { useAuth } from '@/lib/auth-context';
+import { useSavedCompanies } from '@/lib/saved-companies-context';
 import MetricCard from '@/components/ui/MetricCard';
 import Badge from '@/components/ui/Badge';
 import FinancialCharts from '@/components/FinancialCharts';
@@ -27,6 +29,8 @@ export default function CompanyPageClient({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { user } = useAuth();
+  const { isSaved, toggleSave } = useSavedCompanies();
 
   useEffect(() => {
     async function fetchCompany() {
@@ -112,9 +116,31 @@ export default function CompanyPageClient({
           <div className="pb-8">
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
               <div className="flex-1">
-                <h1 className="text-3xl md:text-4xl font-bold mb-2">
-                  {company.company_name || t('company.detail.unnamedCompany')}
-                </h1>
+                <div className="flex items-start gap-3 mb-2">
+                  <h1 className="text-3xl md:text-4xl font-bold">
+                    {company.company_name || t('company.detail.unnamedCompany')}
+                  </h1>
+                  <button
+                    onClick={() => {
+                      if (!user) {
+                        router.push(`/${locale}/auth/signin`);
+                        return;
+                      }
+                      toggleSave(company.id);
+                    }}
+                    className="flex-shrink-0 mt-1 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                  >
+                    {isSaved(company.id) ? (
+                      <svg className="w-6 h-6 text-red-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                    ) : (
+                      <svg className="w-6 h-6 text-white/60 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
                 <div className="flex items-center gap-2 text-gray-300 mb-4">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />

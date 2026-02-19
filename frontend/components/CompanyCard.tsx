@@ -1,11 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { HamburgTarget } from '@/lib/types';
 import { formatCurrency, getShortAddress, getCompanyNachfolgeScore, getScoreVariant, formatNumber } from '@/lib/utils';
 import { getWzDescription } from '@/lib/wz-codes';
 import { useTranslations } from '@/lib/i18n-context';
+import { useAuth } from '@/lib/auth-context';
+import { useSavedCompanies } from '@/lib/saved-companies-context';
+import { useComparison } from '@/lib/comparison-context';
 import Badge from './ui/Badge';
 
 interface CompanyCardProps {
@@ -17,12 +20,19 @@ interface CompanyCardProps {
 export default function CompanyCard({ company, isHovered, onHover }: CompanyCardProps) {
   const t = useTranslations();
   const pathname = usePathname();
+  const router = useRouter();
   const locale = pathname.split('/')[1] || 'en';
   const score = getCompanyNachfolgeScore(company);
   const scoreVariant = getScoreVariant(score);
   const yearsSinceChange = company.last_ownership_change_year
     ? new Date().getFullYear() - company.last_ownership_change_year
     : null;
+
+  const { user } = useAuth();
+  const { isSaved, toggleSave } = useSavedCompanies();
+  const { isSelected, toggleCompare, canAddMore } = useComparison();
+  const saved = isSaved(company.id);
+  const selected = isSelected(company.id);
 
   return (
     <Link href={`/${locale}/company/${company.id}`}>
@@ -38,7 +48,7 @@ export default function CompanyCard({ company, isHovered, onHover }: CompanyCard
         {/* Header with gradient */}
         <div className="h-24 bg-gradient-to-br from-gray-800 to-gray-900 rounded-t-xl relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent" />
-          <div className="absolute bottom-3 left-4 right-4">
+          <div className="absolute bottom-3 left-4 right-12">
             <h3 className="text-white font-semibold text-lg truncate">
               {company.company_name || t('company.detail.unnamedCompany')}
             </h3>
@@ -46,6 +56,30 @@ export default function CompanyCard({ company, isHovered, onHover }: CompanyCard
               {getShortAddress(company)}
             </p>
           </div>
+
+          {/* Save heart button */}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (!user) {
+                router.push(`/${locale}/auth/signin`);
+                return;
+              }
+              toggleSave(company.id);
+            }}
+            className="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/30 hover:bg-black/50 transition-colors"
+          >
+            {saved ? (
+              <svg className="w-4 h-4 text-red-400" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            ) : (
+              <svg className="w-4 h-4 text-white/70 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            )}
+          </button>
         </div>
 
         {/* Content */}
@@ -143,9 +177,22 @@ export default function CompanyCard({ company, isHovered, onHover }: CompanyCard
 
           {/* Footer */}
           <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
-            <span className="text-xs text-gray-400">
-              {t('company.card.dataFrom').replace('{year}', company.report_year?.toString() || t('common.na'))}
-            </span>
+            <label
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+              className="flex items-center gap-1.5 cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                checked={selected}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  toggleCompare(company.id);
+                }}
+                disabled={!canAddMore && !selected}
+                className="w-3.5 h-3.5 rounded border-gray-300 text-primary focus:ring-primary/20"
+              />
+              <span className="text-xs text-gray-500">{t('compare.add')}</span>
+            </label>
             <span className="text-primary text-sm font-medium group-hover:underline">
               {t('company.card.viewDetails')} →
             </span>
