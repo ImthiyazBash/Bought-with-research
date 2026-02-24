@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { HamburgTarget } from '@/lib/types';
@@ -8,7 +9,7 @@ import { getWzDescription } from '@/lib/wz-codes';
 import { useTranslations } from '@/lib/i18n-context';
 import { useAuth } from '@/lib/auth-context';
 import { useSavedCompanies } from '@/lib/saved-companies-context';
-import { useComparison } from '@/lib/comparison-context';
+import { useIsCompareSelected, useCanAddMore, useCompareActions } from '@/lib/comparison-context';
 import Badge from './ui/Badge';
 
 interface CompanyCardProps {
@@ -17,22 +18,76 @@ interface CompanyCardProps {
   onHover?: (id: number | null) => void;
 }
 
-export default function CompanyCard({ company, isHovered, onHover }: CompanyCardProps) {
+// Isolated sub-component: only re-renders when save context changes
+function SaveHeartButton({ companyId, locale }: { companyId: number; locale: string }) {
+  const router = useRouter();
+  const { user } = useAuth();
+  const { isSaved, toggleSave } = useSavedCompanies();
+  const saved = isSaved(companyId);
+
+  return (
+    <button
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!user) {
+          router.push(`/${locale}/auth/signin`);
+          return;
+        }
+        toggleSave(companyId);
+      }}
+      className="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/30 hover:bg-black/50 transition-colors"
+    >
+      {saved ? (
+        <svg className="w-4 h-4 text-red-400" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+      ) : (
+        <svg className="w-4 h-4 text-white/70 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+      )}
+    </button>
+  );
+}
+
+// Isolated sub-component: only re-renders when THIS company's selected state changes
+function CompareToggle({ companyId }: { companyId: number }) {
+  const t = useTranslations();
+  const selected = useIsCompareSelected(companyId);
+  const canAddMore = useCanAddMore();
+  const { toggleCompare } = useCompareActions();
+
+  return (
+    <label
+      onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+      className="flex items-center gap-1.5 cursor-pointer"
+    >
+      <input
+        type="checkbox"
+        checked={selected}
+        onChange={(e) => {
+          e.stopPropagation();
+          toggleCompare(companyId);
+        }}
+        disabled={!canAddMore && !selected}
+        className="w-3.5 h-3.5 rounded border-gray-300 text-primary focus:ring-primary/20"
+      />
+      <span className="text-xs text-gray-500">{t('compare.add')}</span>
+    </label>
+  );
+}
+
+// Main card is memoized — only re-renders when company data or hover state changes
+const CompanyCard = memo(function CompanyCard({ company, isHovered, onHover }: CompanyCardProps) {
   const t = useTranslations();
   const pathname = usePathname();
-  const router = useRouter();
   const locale = pathname.split('/')[1] || 'en';
   const score = getCompanyNachfolgeScore(company);
   const scoreVariant = getScoreVariant(score);
   const yearsSinceChange = company.last_ownership_change_year
     ? new Date().getFullYear() - company.last_ownership_change_year
     : null;
-
-  const { user } = useAuth();
-  const { isSaved, toggleSave } = useSavedCompanies();
-  const { isSelected, toggleCompare, canAddMore } = useComparison();
-  const saved = isSaved(company.id);
-  const selected = isSelected(company.id);
 
   return (
     <Link href={`/${locale}/company/${company.id}`}>
@@ -57,29 +112,7 @@ export default function CompanyCard({ company, isHovered, onHover }: CompanyCard
             </p>
           </div>
 
-          {/* Save heart button */}
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (!user) {
-                router.push(`/${locale}/auth/signin`);
-                return;
-              }
-              toggleSave(company.id);
-            }}
-            className="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/30 hover:bg-black/50 transition-colors"
-          >
-            {saved ? (
-              <svg className="w-4 h-4 text-red-400" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-            ) : (
-              <svg className="w-4 h-4 text-white/70 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-            )}
-          </button>
+          <SaveHeartButton companyId={company.id} locale={locale} />
         </div>
 
         {/* Content */}
@@ -177,22 +210,7 @@ export default function CompanyCard({ company, isHovered, onHover }: CompanyCard
 
           {/* Footer */}
           <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
-            <label
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-              className="flex items-center gap-1.5 cursor-pointer"
-            >
-              <input
-                type="checkbox"
-                checked={selected}
-                onChange={(e) => {
-                  e.stopPropagation();
-                  toggleCompare(company.id);
-                }}
-                disabled={!canAddMore && !selected}
-                className="w-3.5 h-3.5 rounded border-gray-300 text-primary focus:ring-primary/20"
-              />
-              <span className="text-xs text-gray-500">{t('compare.add')}</span>
-            </label>
+            <CompareToggle companyId={company.id} />
             <span className="text-primary text-sm font-medium group-hover:underline">
               {t('company.card.viewDetails')} →
             </span>
@@ -201,7 +219,9 @@ export default function CompanyCard({ company, isHovered, onHover }: CompanyCard
       </div>
     </Link>
   );
-}
+});
+
+export default CompanyCard;
 
 function MetricItem({
   label,

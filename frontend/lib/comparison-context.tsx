@@ -1,51 +1,77 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { ReactNode, useSyncExternalStore, useCallback } from 'react';
 
-interface ComparisonState {
-  selectedIds: number[];
-  isSelected: (id: number) => boolean;
-  toggleCompare: (id: number) => void;
-  clearAll: () => void;
-  canAddMore: boolean;
+// Module-level store — no context re-renders
+let selectedIds: number[] = [];
+const listeners = new Set<() => void>();
+
+function emitChange() {
+  listeners.forEach(l => l());
 }
 
-const ComparisonContext = createContext<ComparisonState>({
-  selectedIds: [],
-  isSelected: () => false,
-  toggleCompare: () => {},
-  clearAll: () => {},
-  canAddMore: true,
-});
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => { listeners.delete(listener); };
+}
 
+function getSelectedIds() {
+  return selectedIds;
+}
+
+function toggleCompare(id: number) {
+  if (selectedIds.includes(id)) {
+    selectedIds = selectedIds.filter(x => x !== id);
+  } else if (selectedIds.length < 4) {
+    selectedIds = [...selectedIds, id];
+  } else {
+    return; // at max, no change
+  }
+  emitChange();
+}
+
+function clearAll() {
+  if (selectedIds.length === 0) return;
+  selectedIds = [];
+  emitChange();
+}
+
+// Hook: only re-renders when THIS company's selected boolean changes
+export function useIsCompareSelected(companyId: number): boolean {
+  return useSyncExternalStore(
+    subscribe,
+    () => selectedIds.includes(companyId),
+    () => false // server snapshot
+  );
+}
+
+// Hook: re-renders when the count changes (for ComparisonBar)
+export function useCompareSelectedIds(): number[] {
+  return useSyncExternalStore(subscribe, getSelectedIds, () => []);
+}
+
+export function useCanAddMore(): boolean {
+  return useSyncExternalStore(
+    subscribe,
+    () => selectedIds.length < 4,
+    () => true
+  );
+}
+
+// Stable action references (never change)
+export function useCompareActions() {
+  return { toggleCompare, clearAll };
+}
+
+// Keep the provider as a pass-through so layout.tsx doesn't need changes
 export function ComparisonProvider({ children }: { children: ReactNode }) {
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
-
-  const isSelected = useCallback(
-    (id: number) => selectedIds.includes(id),
-    [selectedIds]
-  );
-
-  const toggleCompare = useCallback((id: number) => {
-    setSelectedIds(prev => {
-      if (prev.includes(id)) {
-        return prev.filter(x => x !== id);
-      }
-      if (prev.length >= 4) return prev;
-      return [...prev, id];
-    });
-  }, []);
-
-  const clearAll = useCallback(() => setSelectedIds([]), []);
-  const canAddMore = selectedIds.length < 4;
-
-  return (
-    <ComparisonContext.Provider value={{ selectedIds, isSelected, toggleCompare, clearAll, canAddMore }}>
-      {children}
-    </ComparisonContext.Provider>
-  );
+  return <>{children}</>;
 }
 
+// Legacy hook — still works but prefer the granular hooks above
 export function useComparison() {
-  return useContext(ComparisonContext);
+  const ids = useCompareSelectedIds();
+  const canAddMore = useCanAddMore();
+  const isSelected = useCallback((id: number) => ids.includes(id), [ids]);
+  return { selectedIds: ids, isSelected, toggleCompare, clearAll, canAddMore };
 }

@@ -1,11 +1,12 @@
 'use client';
 
-import { useComparison } from '@/lib/comparison-context';
+import { useCompareSelectedIds, useCompareActions } from '@/lib/comparison-context';
 import { useTranslations } from '@/lib/i18n-context';
 import { usePathname, useRouter } from 'next/navigation';
 
 export default function ComparisonBar() {
-  const { selectedIds, clearAll } = useComparison();
+  const selectedIds = useCompareSelectedIds();
+  const { clearAll } = useCompareActions();
   const t = useTranslations();
   const pathname = usePathname();
   const locale = pathname.split('/')[1] || 'en';

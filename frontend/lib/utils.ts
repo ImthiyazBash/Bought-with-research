@@ -80,6 +80,25 @@ export function getSuccessionRisk(age: number | null): 'high' | 'medium' | 'low'
   return 'low';
 }
 
+/** Merge duplicate shareholders (same name + DOB) and sum their ownership percentages */
+function deduplicateShareholders(shareholders: ParsedShareholder[]): ParsedShareholder[] {
+  const map = new Map<string, ParsedShareholder>();
+
+  for (const s of shareholders) {
+    const key = `${s.name.toLowerCase()}|${s.dob ?? ''}`;
+    const existing = map.get(key);
+    if (existing) {
+      if (s.percentage !== null) {
+        existing.percentage = (existing.percentage ?? 0) + s.percentage;
+      }
+    } else {
+      map.set(key, { ...s });
+    }
+  }
+
+  return Array.from(map.values());
+}
+
 export function parseShareholders(company: HamburgTarget): ParsedShareholder[] {
   const shareholders: ParsedShareholder[] = [];
 
@@ -100,7 +119,7 @@ export function parseShareholders(company: HamburgTarget): ParsedShareholder[] {
         });
       }
     }
-    if (shareholders.length > 0) return shareholders;
+    if (shareholders.length > 0) return deduplicateShareholders(shareholders);
   }
 
   // Fallback to parsing comma-separated strings
@@ -121,7 +140,7 @@ export function parseShareholders(company: HamburgTarget): ParsedShareholder[] {
     });
   }
 
-  return shareholders;
+  return deduplicateShareholders(shareholders);
 }
 
 /**
