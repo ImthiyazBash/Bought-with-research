@@ -10,6 +10,26 @@ export const WZ_CODES: Record<string, { de: string; en: string }> = {
   },
 
   // Manufacturing (Verarbeitendes Gewerbe)
+  '11.02': {
+    de: 'Herstellung von Traubenwein',
+    en: 'Manufacture of wine from grape',
+  },
+  '16.23.0': {
+    de: 'Herstellung von sonstigen Konstruktionsteilen, Fertigbauteilen, Ausbauelementen und Fertigteilbauten aus Holz',
+    en: 'Manufacture of other builders\' carpentry and joinery',
+  },
+  '16.29.0': {
+    de: 'Herstellung von sonstigen Holzwaren; Kork-, Flecht- und Korbwaren (ohne Möbel)',
+    en: 'Manufacture of other products of wood; manufacture of articles of cork, straw and plaiting materials',
+  },
+  '22.2': {
+    de: 'Herstellung von Kunststoffwaren',
+    en: 'Manufacture of plastic products',
+  },
+  '23.13': {
+    de: 'Herstellung von Hohlglas',
+    en: 'Manufacture of hollow glass',
+  },
   '25.12': {
     de: 'Herstellung von Türen und Fenstern aus Metall',
     en: 'Manufacture of doors and windows of metal',
@@ -18,15 +38,59 @@ export const WZ_CODES: Record<string, { de: string; en: string }> = {
     de: 'Oberflächenveredlung und Wärmebehandlung',
     en: 'Treatment and coating of metals',
   },
+  '25.62': {
+    de: 'Mechanik a. n. g.',
+    en: 'Manufacture of locks and hinges',
+  },
+  '26.12.0': {
+    de: 'Herstellung von bestückten Leiterplatten',
+    en: 'Manufacture of loaded electronic boards',
+  },
   '28': {
     de: 'Maschinenbau',
     en: 'Manufacture of machinery and equipment n.e.c.',
+  },
+  '28.29': {
+    de: 'Herstellung von sonstigen nicht wirtschaftszweigspezifischen Maschinen a. n. g.',
+    en: 'Manufacture of other general-purpose machinery n.e.c.',
+  },
+  '29.10': {
+    de: 'Herstellung von Kraftwagen und Kraftwagenmotoren',
+    en: 'Manufacture of motor vehicles',
+  },
+  '33.12.0': {
+    de: 'Reparatur von Maschinen',
+    en: 'Repair of machinery',
+  },
+
+  // Energy supply (Energieversorgung)
+  '35.11': {
+    de: 'Elektrizitätserzeugung',
+    en: 'Production of electricity from non-renewable sources',
+  },
+
+  // Water supply & waste management (Wasserversorgung; Abwasser- und Abfallentsorgung)
+  '37.00': {
+    de: 'Abwasserentsorgung',
+    en: 'Sewerage',
   },
 
   // Construction (Baugewerbe)
   '41.00': {
     de: 'Erschließung, Errichtung und Abbruch von Gebäuden',
     en: 'Construction of residential and non-residential buildings',
+  },
+  '41.20.1': {
+    de: 'Bau von Gebäuden (ohne Fertigteilbau)',
+    en: 'Construction of residential and non-residential buildings (except prefabricated constructions)',
+  },
+  '42': {
+    de: 'Tiefbau',
+    en: 'Civil engineering',
+  },
+  '42.11': {
+    de: 'Bau von Straßen',
+    en: 'Construction of roads and motorways',
   },
   '43.21': {
     de: 'Elektroinstallation',
@@ -62,21 +126,65 @@ export const WZ_CODES: Record<string, { de: string; en: string }> = {
   },
 
   // Wholesale and retail trade (Handel)
+  '45.1': {
+    de: 'Handel mit Kraftwagen',
+    en: 'Sale of motor vehicles',
+  },
   '45.11': {
     de: 'Handel mit Kraftwagen mit einem Gesamtgewicht von 3,5 t oder weniger',
     en: 'Sale of cars and light motor vehicles',
+  },
+  '45.20': {
+    de: 'Instandhaltung und Reparatur von Kraftwagen',
+    en: 'Maintenance and repair of motor vehicles',
+  },
+  '45.20.2': {
+    de: 'Autowäsche und Fahrzeugpflege',
+    en: 'Washing, polishing, etc. of motor vehicles',
   },
   '45.32': {
     de: 'Einzelhandel mit Kraftwagenteilen und -zubehör',
     en: 'Retail trade of motor vehicle parts and accessories',
   },
+  '45.32.0': {
+    de: 'Einzelhandel mit Kraftwagenteilen und -zubehör',
+    en: 'Retail trade of motor vehicle parts and accessories',
+  },
+  '46.1': {
+    de: 'Handelsvermittlung',
+    en: 'Wholesale on a fee or contract basis',
+  },
+  '46.31': {
+    de: 'Großhandel mit Obst, Gemüse und Kartoffeln',
+    en: 'Wholesale of fruit and vegetables',
+  },
+  '46.34': {
+    de: 'Großhandel mit Getränken',
+    en: 'Wholesale of beverages',
+  },
   '46.38': {
     de: 'Großhandel mit sonstigen Nahrungsmitteln',
     en: 'Wholesale of other food',
   },
+  '46.39': {
+    de: 'Großhandel mit Nahrungs- und Genussmitteln ohne ausgeprägten Schwerpunkt',
+    en: 'Non-specialised wholesale of food, beverages and tobacco',
+  },
   '46.42': {
     de: 'Großhandel mit Bekleidung und Schuhen',
     en: 'Wholesale of clothing and footwear',
+  },
+  '46.47': {
+    de: 'Großhandel mit Möbeln, Teppichen, Lampen und Leuchten',
+    en: 'Wholesale of household, office and shop furniture, carpets and lighting equipment',
+  },
+  '46.49.1': {
+    de: 'Großhandel mit Spielwaren und Musikinstrumenten',
+    en: 'Wholesale of games, toys and musical instruments',
+  },
+  '46.49.2': {
+    de: 'Großhandel mit Fahrrädern, E-Bikes, deren Teile und Zubehör',
+    en: 'Wholesale of bicycles, e-bikes, their parts and accessories',
   },
   '46.6': {
     de: 'Großhandel mit sonstigen Maschinen, Ausrüstungen und Zubehör',
@@ -86,6 +194,14 @@ export const WZ_CODES: Record<string, { de: string; en: string }> = {
     de: 'Großhandel mit festen Brennstoffen und Mineralölerzeugnissen',
     en: 'Wholesale of motor vehicles',
   },
+  '46.72': {
+    de: 'Großhandel mit Erzen, Metallen und Metallhalbzeug',
+    en: 'Wholesale of motor vehicle parts and accessories',
+  },
+  '46.73': {
+    de: 'Großhandel mit Holz, Baustoffen, Anstrichmitteln und Sanitärkeramik',
+    en: 'Wholesale of motorcycles, motorcycle parts and accessories',
+  },
   '46.74': {
     de: 'Großhandel mit Metall- und Kunststoffwaren für Bauzwecke sowie Installationsbedarf für Gas, Wasser und Heizung',
     en: 'Wholesale of hardware, plumbing and heating equipment and supplies',
@@ -94,9 +210,41 @@ export const WZ_CODES: Record<string, { de: string; en: string }> = {
     de: 'Großhandel ohne ausgeprägten Schwerpunkt',
     en: 'Non-specialised wholesale trade',
   },
+  '47.11': {
+    de: 'Einzelhandel mit Waren verschiedener Art, Hauptrichtung Nahrungs- und Genussmittel',
+    en: 'Non-specialised retail sale of predominately food, beverages or tobacco',
+  },
+  '47.22': {
+    de: 'Einzelhandel mit Fleisch und Fleischwaren',
+    en: 'Retail sale of meat and meat products',
+  },
   '47.30.1': {
     de: 'Tankstellen',
     en: 'Retail trade in third-party name of motor fuels, agency petrol stations',
+  },
+  '47.51': {
+    de: 'Einzelhandel mit Textilien',
+    en: 'Retail sale of textiles',
+  },
+  '47.59.1': {
+    de: 'Einzelhandel mit Möbeln',
+    en: 'Retail sale of furniture in specialised stores',
+  },
+  '47.72': {
+    de: 'Einzelhandel mit Schuhen und Lederwaren',
+    en: 'Retail sale of footwear and leather goods',
+  },
+  '47.76': {
+    de: 'Einzelhandel mit Blumen, Pflanzen, Sämereien, Düngemitteln, zoologischem Bedarf und lebenden Tieren',
+    en: 'Retail sale of flowers, plants, fertilisers, pets and pet food',
+  },
+  '47.78': {
+    de: 'Sonstiger Einzelhandel in Verkaufsräumen mit sonstigen Waren',
+    en: 'Retail sale of other new goods',
+  },
+  '47.78.1': {
+    de: 'Einzelhandel mit Foto- und optischen Erzeugnissen (ohne Augenoptiker)',
+    en: 'Retail sale of photographic and optical products, excluding ophthalmic optics',
   },
   '47.99.9': {
     de: 'Sonstiger Einzelhandel a. n. g. (nicht in Verkaufsräumen)',
@@ -111,6 +259,14 @@ export const WZ_CODES: Record<string, { de: string; en: string }> = {
   '50.10': {
     de: 'Personenbeförderung in der See- und Küstenschifffahrt',
     en: 'Sea and coastal passenger water transport',
+  },
+  '50.20.0': {
+    de: 'Güterbeförderung in der See- und Küstenschifffahrt',
+    en: 'Sea and coastal freight water transport',
+  },
+  '52.2': {
+    de: 'Erbringung von sonstigen Dienstleistungen für den Verkehr',
+    en: 'Support activities for transportation',
   },
   '52.29': {
     de: 'Erbringung von sonstigen Dienstleistungen für den Verkehr',
@@ -132,6 +288,22 @@ export const WZ_CODES: Record<string, { de: string; en: string }> = {
   },
 
   // Information and communication (Information und Kommunikation)
+  '58.11': {
+    de: 'Verlegen von Büchern',
+    en: 'Publishing of books',
+  },
+  '58.13': {
+    de: 'Verlegen von Zeitschriften',
+    en: 'Publishing of journals and periodicals',
+  },
+  '58.19.0': {
+    de: 'Sonstiges Verlagswesen (ohne Software)',
+    en: 'Other publishing activities, except software publishing',
+  },
+  '62.01.9': {
+    de: 'Sonstige Softwareentwicklung',
+    en: 'Other software development',
+  },
   '62.02': {
     de: 'Erbringung von Beratungsleistungen auf dem Gebiet der Informationstechnologie',
     en: 'Computer consultancy activities',
@@ -142,15 +314,51 @@ export const WZ_CODES: Record<string, { de: string; en: string }> = {
   },
 
   // Financial and insurance activities (Finanz- und Versicherungsdienstleistungen)
+  '64.2': {
+    de: 'Beteiligungsgesellschaften',
+    en: 'Activities of holding companies and financing conduits',
+  },
+  '64.20': {
+    de: 'Beteiligungsgesellschaften',
+    en: 'Activities of holding companies',
+  },
+  '64.99': {
+    de: 'Sonstige Finanzdienstleistungen a. n. g.',
+    en: 'Other financial service activities, except insurance and pension funding n.e.c.',
+  },
   '66.19': {
     de: 'Sonstige mit Finanzdienstleistungen verbundene Tätigkeiten',
     en: 'Other activities auxiliary to financial services, except insurance and pension funding',
   },
+  '66.19.0': {
+    de: 'Sonstige mit Finanzdienstleistungen verbundene Tätigkeiten',
+    en: 'Other activities auxiliary to financial services, except insurance and pension funding',
+  },
+  '66.22': {
+    de: 'Tätigkeit von Versicherungsmaklerinnen und -maklern',
+    en: 'Activities of insurance agents and brokers',
+  },
 
   // Real estate activities (Grundstücks- und Wohnungswesen)
+  '68.20': {
+    de: 'Vermietung, Verpachtung von eigenen oder geleasten Grundstücken, Gebäuden und Wohnungen',
+    en: 'Rental and operating of own or leased real estate',
+  },
+  '68.31': {
+    de: 'Vermittlung von Grundstücken, Gebäuden und Wohnungen für Dritte',
+    en: 'Intermediation service activities for real estate activities',
+  },
+  '68.31.1': {
+    de: 'Vermittlung von Wohngrundstücken, Wohngebäuden und Wohnungen für Dritte',
+    en: 'Activities of real estate agencies relating to residential real estate',
+  },
   '68.32': {
     de: 'Verwaltung von Grundstücken, Gebäuden und Wohnungen für Dritte',
     en: 'Other real estate activities on a fee or contract basis',
+  },
+  '68.32.1': {
+    de: 'Verwaltung von Wohngrundstücken, Wohngebäuden und Wohnungen für Dritte',
+    en: 'Management of residential real estate on a fee or contract basis',
   },
 
   // Professional, scientific and technical activities (Freiberufliche, wissenschaftliche und technische Dienstleistungen)
@@ -162,15 +370,31 @@ export const WZ_CODES: Record<string, { de: string; en: string }> = {
     de: 'Unternehmensberatung',
     en: 'Business and other management consultancy activities',
   },
+  '71.1': {
+    de: 'Architektur- und Ingenieurbüros',
+    en: 'Architectural and engineering activities and related technical consultancy',
+  },
   '71.12': {
     de: 'Technische Untersuchung und Beratung',
     en: 'Engineering activities and related technical consultancy',
   },
+  '73.11.0': {
+    de: 'Werbeagenturen',
+    en: 'Activities of advertising agencies',
+  },
 
   // Administrative and support service activities (Sonstige wirtschaftliche Dienstleistungen)
+  '78.20': {
+    de: 'Befristete Überlassung von Arbeitskräften',
+    en: 'Temporary employment agency activities and other human resource provisions',
+  },
   '80.10': {
     de: 'Private Wach- und Sicherheitsdienste',
     en: 'Private security activities',
+  },
+  '81.21.0': {
+    de: 'Allgemeine Gebäudereinigung',
+    en: 'General cleaning of buildings',
   },
   '81.30': {
     de: 'Garten- und Landschaftsbau sowie Erbringung von sonstigen gärtnerischen Dienstleistungen',
@@ -183,7 +407,17 @@ export const WZ_CODES: Record<string, { de: string; en: string }> = {
     en: 'Fire service activities',
   },
 
+  // Education (Erziehung und Unterricht)
+  '85.42': {
+    de: 'Tertiärer Unterricht',
+    en: 'Tertiary education',
+  },
+
   // Human health and social work activities (Gesundheits- und Sozialwesen)
+  '86.23': {
+    de: 'Zahnarztpraxen',
+    en: 'Dental practice care activities',
+  },
   '87.30': {
     de: 'Altenheime, Alten- und Behindertenwohnheime',
     en: 'Residential care activities for older persons or persons with physical disabilities',
@@ -194,9 +428,19 @@ export const WZ_CODES: Record<string, { de: string; en: string }> = {
   },
 
   // Arts, entertainment and recreation (Kunst, Unterhaltung und Erholung)
+  '93.11': {
+    de: 'Betrieb von Sportanlagen',
+    en: 'Operation of sports facilities',
+  },
   '93.13': {
     de: 'Fitnesszentren',
     en: 'Activities of fitness centres',
+  },
+
+  // Other service activities (Erbringung von sonstigen Dienstleistungen)
+  '96.01.0': {
+    de: 'Wäscherei und chemische Reinigung',
+    en: 'Washing and (dry-)cleaning of textile and fur products',
   },
 };
 
