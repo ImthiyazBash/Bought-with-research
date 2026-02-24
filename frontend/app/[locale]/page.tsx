@@ -223,9 +223,11 @@ function HomeContent() {
 
       // Source filter
       if (filters.selectedSource) {
-        const companySource = company.source || 'bundesanzeiger';
-        if (companySource !== filters.selectedSource) {
-          return false;
+        if (filters.selectedSource === 'new_batch') {
+          if (company.id < 82 || company.id > 184) return false;
+        } else {
+          const companySource = company.source || 'bundesanzeiger';
+          if (companySource !== filters.selectedSource) return false;
         }
       }
 

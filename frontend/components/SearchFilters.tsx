@@ -192,6 +192,7 @@ export default function SearchFilters({
                     { value: null, label: t('filters.allSources') },
                     { value: 'bundesanzeiger', label: t('company.detail.sourceBundesanzeiger') },
                     { value: 'google_places', label: t('company.detail.sourceGooglePlaces') },
+                    { value: 'new_batch', label: t('filters.newBatch') },
                   ].map((option) => (
                     <button
                       key={option.value || 'all'}
