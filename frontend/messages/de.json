@@ -48,8 +48,6 @@
     "none": "Kein Score",
     "noScore": "Kein Score",
     "indicators": "Nachfolge-Score Indikatoren",
-    "highCount": "{count} Hoch (8+)",
-    "mediumCount": "{count} Mittel (5-7)",
     "breakdown": "Score-Aufschlüsselung",
     "factors": {
       "age": "Inhaberalter",
@@ -100,9 +98,6 @@
   "shareholders": {
     "title": "Gesellschafter",
     "noData": "Keine Gesellschafterinformationen verfügbar.",
-    "highOpportunity": "Hohe Nachfolgechance",
-    "highOpportunityDescriptionSingle": "Ein Gesellschafter ist über 65 Jahre alt, was auf potenziellen Nachfolgeplanungsbedarf hindeutet.",
-    "highOpportunityDescriptionMultiple": "{count} Gesellschafter sind über 65 Jahre alt, was auf starken Nachfolgeplanungsbedarf hindeutet.",
     "ownershipDistribution": "Verteilung der Eigentumsanteile",
     "shareholderDetails": "Gesellschafterdetails",
     "name": "Name",

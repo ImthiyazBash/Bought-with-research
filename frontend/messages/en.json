@@ -48,8 +48,6 @@
     "none": "No Score",
     "noScore": "No Score",
     "indicators": "Succession Score Indicators",
-    "highCount": "{count} High (8+)",
-    "mediumCount": "{count} Medium (5-7)",
     "breakdown": "Score Breakdown",
     "factors": {
       "age": "Owner Age",
@@ -100,9 +98,6 @@
   "shareholders": {
     "title": "Shareholders",
     "noData": "No shareholder information available.",
-    "highOpportunity": "High Succession Opportunity",
-    "highOpportunityDescriptionSingle": "One shareholder is 65+ years old, indicating potential succession planning needs.",
-    "highOpportunityDescriptionMultiple": "{count} shareholders are 65+ years old, indicating strong succession planning needs.",
     "ownershipDistribution": "Ownership Distribution",
     "shareholderDetails": "Shareholder Details",
     "name": "Name",

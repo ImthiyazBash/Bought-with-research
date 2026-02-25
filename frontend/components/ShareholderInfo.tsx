@@ -36,8 +36,6 @@ export default function ShareholderInfo({ company }: ShareholderInfoProps) {
     );
   }
 
-  const highRiskCount = shareholders.filter(s => s.nachfolgeScore >= 8).length;
-  const mediumRiskCount = shareholders.filter(s => s.nachfolgeScore >= 5 && s.nachfolgeScore < 8).length;
   const breakdown = computeSuccessionBreakdown(company);
   const companyScore = getCompanyNachfolgeScore(company);
 
@@ -95,42 +93,9 @@ export default function ShareholderInfo({ company }: ShareholderInfoProps) {
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">
-          {t('shareholders.title')}
-        </h3>
-        <div className="flex gap-2">
-          {highRiskCount > 0 && (
-            <Badge variant="high">
-              {t('score.highCount').replace('{count}', highRiskCount.toString())}
-            </Badge>
-          )}
-          {mediumRiskCount > 0 && (
-            <Badge variant="medium">
-              {t('score.mediumCount').replace('{count}', mediumRiskCount.toString())}
-            </Badge>
-          )}
-        </div>
-      </div>
-
-      {/* Summary Alert */}
-      {highRiskCount > 0 && (
-        <div className="mb-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
-          <div className="flex items-start gap-3">
-            <span className="text-2xl">🎯</span>
-            <div>
-              <p className="font-medium text-emerald-800">
-                {t('shareholders.highOpportunity')}
-              </p>
-              <p className="text-sm text-emerald-700 mt-1">
-                {highRiskCount === 1
-                  ? t('shareholders.highOpportunityDescriptionSingle')
-                  : t('shareholders.highOpportunityDescriptionMultiple').replace('{count}', highRiskCount.toString())}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        {t('shareholders.title')}
+      </h3>
 
       {/* Ownership Pie Chart */}
       {hasOwnershipData && (
@@ -197,9 +162,6 @@ export default function ShareholderInfo({ company }: ShareholderInfoProps) {
                 </th>
                 <th className="text-center py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                   {t('shareholders.age')}
-                </th>
-                <th className="text-center py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                  {t('score.label')}
                 </th>
               </tr>
             </thead>
@@ -318,22 +280,9 @@ function ShareholderRow({
         {shareholder.dob || t('shareholders.unknown')}
       </td>
       <td className="py-4 px-4 text-center whitespace-nowrap">
-        <span
-          className={`font-semibold ${
-            shareholder.nachfolgeScore >= 8
-              ? 'text-emerald-600'
-              : shareholder.nachfolgeScore >= 5
-              ? 'text-amber-600'
-              : 'text-red-600'
-          }`}
-        >
+        <span className="font-semibold text-gray-900">
           {shareholder.age !== null ? `${shareholder.age} ${t('common.years')}` : t('shareholders.unknown')}
         </span>
-      </td>
-      <td className="py-4 px-4 text-center whitespace-nowrap">
-        <Badge variant={getScoreVariant(shareholder.nachfolgeScore)}>
-          {shareholder.nachfolgeScore}/10
-        </Badge>
       </td>
     </tr>
   );
