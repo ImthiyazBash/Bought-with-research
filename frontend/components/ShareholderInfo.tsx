@@ -9,7 +9,7 @@ import {
   Legend,
 } from 'recharts';
 import { HamburgTarget, ParsedShareholder } from '@/lib/types';
-import { parseShareholders, getScoreVariant } from '@/lib/utils';
+import { parseShareholders, getScoreVariant, computeSuccessionBreakdown, getCompanyNachfolgeScore } from '@/lib/utils';
 import { useTranslations } from '@/lib/i18n-context';
 import Badge from './ui/Badge';
 
@@ -36,8 +36,10 @@ export default function ShareholderInfo({ company }: ShareholderInfoProps) {
     );
   }
 
-  const highRiskCount = shareholders.filter(s => s.nachfolgeScore >= 10).length;
-  const mediumRiskCount = shareholders.filter(s => s.nachfolgeScore >= 7 && s.nachfolgeScore < 10).length;
+  const highRiskCount = shareholders.filter(s => s.nachfolgeScore >= 8).length;
+  const mediumRiskCount = shareholders.filter(s => s.nachfolgeScore >= 5 && s.nachfolgeScore < 8).length;
+  const breakdown = computeSuccessionBreakdown(company);
+  const companyScore = getCompanyNachfolgeScore(company);
 
   // Prepare pie chart data for ownership
   const ownershipData = shareholders
@@ -216,12 +218,31 @@ export default function ShareholderInfo({ company }: ShareholderInfoProps) {
         </div>
       </div>
 
-      {/* Score Explanation */}
+      {/* Score Breakdown Panel */}
+      {breakdown.total !== null && (
+        <div className="mt-6 pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-sm font-medium text-gray-700">{t('score.breakdown')}</h4>
+            <Badge variant={getScoreVariant(companyScore)}>
+              {companyScore !== null ? `${companyScore.toFixed(1)}/10` : t('score.noScore')}
+            </Badge>
+          </div>
+          <div className="space-y-3">
+            <ScoreFactorBar label={t('score.factors.age')} score={breakdown.ageScore} weight="30%" />
+            <ScoreFactorBar label={t('score.factors.concentration')} score={breakdown.concentrationScore} weight="20%" />
+            <ScoreFactorBar label={t('score.factors.gap')} score={breakdown.gapScore} weight="20%" />
+            <ScoreFactorBar label={t('score.factors.stability')} score={breakdown.stabilityScore} weight="15%" />
+            <ScoreFactorBar label={t('score.factors.simplicity')} score={breakdown.simplicityScore} weight="15%" />
+          </div>
+        </div>
+      )}
+
+      {/* Score Legend */}
       <div className="mt-6 pt-4 border-t border-gray-100">
         <p className="text-xs text-gray-500 font-medium mb-2">
           {t('score.indicators')}
         </p>
-        <div className="grid grid-cols-3 gap-4 text-xs">
+        <div className="grid grid-cols-4 gap-3 text-xs">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
             <span className="text-gray-600">{t('score.high')}</span>
@@ -234,8 +255,30 @@ export default function ShareholderInfo({ company }: ShareholderInfoProps) {
             <span className="w-2 h-2 rounded-full bg-red-500" />
             <span className="text-gray-600">{t('score.low')}</span>
           </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-gray-400" />
+            <span className="text-gray-600">{t('score.none')}</span>
+          </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function ScoreFactorBar({ label, score, weight }: { label: string; score: number; weight: string }) {
+  const pct = (score / 10) * 100;
+  const color = score >= 8 ? 'bg-emerald-500' : score >= 5 ? 'bg-amber-500' : score > 0 ? 'bg-red-400' : 'bg-gray-300';
+
+  return (
+    <div className="flex items-center gap-3">
+      <div className="w-28 flex-shrink-0">
+        <span className="text-xs text-gray-600">{label}</span>
+        <span className="text-[10px] text-gray-400 ml-1">({weight})</span>
+      </div>
+      <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div className={`h-full rounded-full ${color} transition-all`} style={{ width: `${pct}%` }} />
+      </div>
+      <span className="text-xs font-medium text-gray-700 w-8 text-right">{score.toFixed(1)}</span>
     </div>
   );
 }
@@ -277,9 +320,9 @@ function ShareholderRow({
       <td className="py-4 px-4 text-center whitespace-nowrap">
         <span
           className={`font-semibold ${
-            shareholder.nachfolgeScore >= 10
+            shareholder.nachfolgeScore >= 8
               ? 'text-emerald-600'
-              : shareholder.nachfolgeScore >= 7
+              : shareholder.nachfolgeScore >= 5
               ? 'text-amber-600'
               : 'text-red-600'
           }`}

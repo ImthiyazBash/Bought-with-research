@@ -34,7 +34,7 @@
     "sectorsSelected": "{count} ausgewählt",
     "searchSectors": "Branchen suchen...",
     "minScore": "Mindest-Nachfolge-Score",
-    "scoreDescription": "Höhere Werte deuten auf einen höheren Nachfolgebedarf hin (10 = Alter 65+, 7-9 = Alter 55-64, 1-6 = Alter <55)",
+    "scoreDescription": "5-Faktor-Score: Inhaberalter (30%), Konzentration (20%), Nachfolgelücke (20%), Stabilität (15%), Deal-Einfachheit (15%)",
     "allSources": "Alle Quellen",
     "newBatch": "Neuer Batch (82–184)",
     "source": "Datenquelle"
@@ -42,12 +42,22 @@
   "score": {
     "label": "Nachfolge-Score",
     "legend": "Nachfolge-Score",
-    "high": "Score 10 (Alter 65+)",
-    "medium": "Score 7-9 (Alter 55-64)",
-    "low": "Score 1-6 (Alter <55)",
+    "high": "Hoch (8-10)",
+    "medium": "Mittel (5-7)",
+    "low": "Niedrig (1-4)",
+    "none": "Kein Score",
+    "noScore": "Kein Score",
     "indicators": "Nachfolge-Score Indikatoren",
-    "highCount": "{count} Score 10",
-    "mediumCount": "{count} Score 7-9"
+    "highCount": "{count} Hoch (8+)",
+    "mediumCount": "{count} Mittel (5-7)",
+    "breakdown": "Score-Aufschlüsselung",
+    "factors": {
+      "age": "Inhaberalter",
+      "concentration": "Konzentration",
+      "stability": "Stabilität",
+      "gap": "Nachfolgelücke",
+      "simplicity": "Deal-Einfachheit"
+    }
   },
   "company": {
     "card": {

@@ -1,5 +1,5 @@
 import { differenceInYears, parse } from 'date-fns';
-import type { HamburgTarget, ParsedShareholder } from './types';
+import type { HamburgTarget, ParsedShareholder, SuccessionScoreBreakdown } from './types';
 
 export function formatCurrency(amount: number | null): string {
   if (amount === null || amount === undefined) return 'N/A';
@@ -116,6 +116,7 @@ export function parseShareholders(company: HamburgTarget): ParsedShareholder[] {
           nachfolgeScore: score,
           successionRisk: getScoreVariant(score),
           percentage: detail.percentage ?? detail.ownership_percentage ?? null,
+          isPerson: dob !== null,
         });
       }
     }
@@ -137,50 +138,167 @@ export function parseShareholders(company: HamburgTarget): ParsedShareholder[] {
       nachfolgeScore: score,
       successionRisk: getScoreVariant(score),
       percentage: null,
+      isPerson: dob !== null,
     });
   }
 
   return deduplicateShareholders(shareholders);
 }
 
+// ── 5-Factor Succession Scoring ──────────────────────────────────────
+
 /**
- * Get company-level Nachfolge-Score (highest among all shareholders)
- *
- * @param company - Hamburg Target company data
- * @returns Highest score from all shareholders (1-10)
+ * Factor 1 (30%): Ownership-weighted age score
+ * Weights each shareholder's age score by their ownership percentage.
  */
-export function getCompanyNachfolgeScore(company: HamburgTarget): number {
+export function computeAgeFactor(shareholders: ParsedShareholder[]): number {
+  const persons = shareholders.filter(s => s.isPerson);
+  if (persons.length === 0) return 0;
+
+  const withPct = persons.filter(s => s.percentage !== null && s.percentage > 0);
+  if (withPct.length > 0) {
+    const totalPct = withPct.reduce((sum, s) => sum + s.percentage!, 0);
+    const weighted = withPct.reduce((sum, s) => sum + s.nachfolgeScore * s.percentage!, 0);
+    return totalPct > 0 ? weighted / totalPct : 0;
+  }
+
+  // Equal weight fallback
+  const avg = persons.reduce((sum, s) => sum + s.nachfolgeScore, 0) / persons.length;
+  return avg;
+}
+
+/**
+ * Factor 2 (20%): Senior ownership concentration
+ * What % of ownership is held by shareholders aged 55+?
+ */
+export function computeConcentrationFactor(shareholders: ParsedShareholder[]): number {
+  const persons = shareholders.filter(s => s.isPerson);
+  if (persons.length === 0) return 0;
+
+  const withPct = persons.filter(s => s.percentage !== null && s.percentage > 0);
+
+  let seniorPct: number;
+  if (withPct.length > 0) {
+    const totalPct = withPct.reduce((sum, s) => sum + s.percentage!, 0);
+    const seniorTotal = withPct
+      .filter(s => s.age !== null && s.age >= 55)
+      .reduce((sum, s) => sum + s.percentage!, 0);
+    seniorPct = totalPct > 0 ? (seniorTotal / totalPct) * 100 : 0;
+  } else {
+    const seniorCount = persons.filter(s => s.age !== null && s.age >= 55).length;
+    seniorPct = (seniorCount / persons.length) * 100;
+  }
+
+  let score = (seniorPct / 100) * 10;
+  if (seniorPct > 50) score += 2;
+  return Math.min(10, score);
+}
+
+/**
+ * Factor 3 (15%): Ownership stability
+ * Longer time since last change = higher succession likelihood.
+ */
+export function computeStabilityFactor(lastOwnershipChangeYear: number | null): number {
+  if (lastOwnershipChangeYear === null) return 5; // neutral default
+  const yearsSince = new Date().getFullYear() - lastOwnershipChangeYear;
+  return Math.min(10, Math.max(0, yearsSince));
+}
+
+/**
+ * Factor 4 (20%): Successor gap
+ * If the youngest person is old, there's no next-gen successor ready.
+ */
+export function computeSuccessorGapFactor(shareholders: ParsedShareholder[]): number {
+  const persons = shareholders.filter(s => s.isPerson && s.age !== null);
+  if (persons.length === 0) return 5; // neutral default
+
+  const youngestAge = Math.min(...persons.map(s => s.age!));
+
+  if (youngestAge >= 65) return 10;
+  if (youngestAge >= 55) return 8;
+  if (youngestAge >= 45) return 6;
+  if (youngestAge >= 35) return 4;
+  return 2; // under 35 — likely has successors
+}
+
+/**
+ * Factor 5 (15%): Deal simplicity
+ * Fewer shareholders = easier deal.
+ */
+export function computeSimplicityFactor(shareholders: ParsedShareholder[]): number {
+  const count = shareholders.length;
+  if (count <= 1) return 10;
+  if (count === 2) return 8;
+  if (count === 3) return 6;
+  if (count === 4) return 4;
+  return 2;
+}
+
+/**
+ * Compute the full 5-factor succession breakdown for a company.
+ */
+export function computeSuccessionBreakdown(company: HamburgTarget): SuccessionScoreBreakdown {
   const shareholders = parseShareholders(company);
 
-  if (shareholders.length === 0) return 1;
+  if (shareholders.length === 0) {
+    return { total: null, ageScore: 0, concentrationScore: 0, stabilityScore: 0, gapScore: 0, simplicityScore: 0 };
+  }
 
-  // Return the highest score (oldest shareholder)
-  const scores = shareholders.map(s => s.nachfolgeScore);
+  const ageScore = computeAgeFactor(shareholders);
+  const concentrationScore = computeConcentrationFactor(shareholders);
+  const stabilityScore = computeStabilityFactor(company.last_ownership_change_year);
+  const gapScore = computeSuccessorGapFactor(shareholders);
+  const simplicityScore = computeSimplicityFactor(shareholders);
 
-  return Math.max(...scores);
+  const total = ageScore * 0.30 + concentrationScore * 0.20 + stabilityScore * 0.15 + gapScore * 0.20 + simplicityScore * 0.15;
+
+  return {
+    total: Math.round(total * 10) / 10,
+    ageScore: Math.round(ageScore * 10) / 10,
+    concentrationScore: Math.round(concentrationScore * 10) / 10,
+    stabilityScore: Math.round(stabilityScore * 10) / 10,
+    gapScore: Math.round(gapScore * 10) / 10,
+    simplicityScore: Math.round(simplicityScore * 10) / 10,
+  };
+}
+
+/**
+ * Get company-level Nachfolge-Score.
+ * Prefers pre-computed DB column; falls back to client-side computation.
+ */
+export function getCompanyNachfolgeScore(company: HamburgTarget): number | null {
+  if (company.succession_score !== null && company.succession_score !== undefined) {
+    return company.succession_score;
+  }
+
+  const breakdown = computeSuccessionBreakdown(company);
+  return breakdown.total;
 }
 
 /**
  * Get color for score visualization
- * 10 = red, 7-9 = amber, 1-6 = green
+ * 8-10 = green (high), 5-7 = amber (medium), 1-4 = red (low), null = grey
  */
-export function getScoreColor(score: number): string {
-  if (score >= 10) return '#10B981'; // green - high succession opportunity
-  if (score >= 7) return '#F59E0B'; // amber - medium succession opportunity
-  return '#EF4444'; // red - low succession opportunity
+export function getScoreColor(score: number | null): string {
+  if (score === null || score === 0) return '#9CA3AF'; // grey
+  if (score >= 8) return '#10B981'; // green
+  if (score >= 5) return '#F59E0B'; // amber
+  return '#EF4444'; // red
 }
 
 /**
  * Get score category for badge styling
+ * 8-10 = high, 5-7 = medium, 1-4 = low, null/0 = neutral
  */
-export function getScoreVariant(score: number): 'high' | 'medium' | 'low' {
-  if (score >= 10) return 'high';
-  if (score >= 7) return 'medium';
+export function getScoreVariant(score: number | null): 'high' | 'medium' | 'low' | 'neutral' {
+  if (score === null || score === 0) return 'neutral';
+  if (score >= 8) return 'high';
+  if (score >= 5) return 'medium';
   return 'low';
 }
 
 /** @deprecated Use getCompanyNachfolgeScore instead */
-export function getHighestSuccessionRisk(company: HamburgTarget): 'high' | 'medium' | 'low' {
+export function getHighestSuccessionRisk(company: HamburgTarget): 'high' | 'medium' | 'low' | 'neutral' {
   const score = getCompanyNachfolgeScore(company);
   return getScoreVariant(score);
 }

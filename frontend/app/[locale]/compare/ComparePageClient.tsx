@@ -108,7 +108,7 @@ function CompareContent({ locale }: { locale: string }) {
       label: t('successionScore'),
       getValue: (c: HamburgTarget) => {
         const score = getCompanyNachfolgeScore(c);
-        return `${score}/10`;
+        return score !== null ? `${score.toFixed(1)}/10` : '-';
       },
       getVariant: (c: HamburgTarget) => getScoreVariant(getCompanyNachfolgeScore(c)),
     },
@@ -164,6 +164,7 @@ function CompareContent({ locale }: { locale: string }) {
                       <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${
                         variant === 'high' ? 'bg-emerald-100 text-emerald-800' :
                         variant === 'medium' ? 'bg-amber-100 text-amber-800' :
+                        variant === 'neutral' ? 'bg-gray-100 text-gray-800' :
                         'bg-red-100 text-red-800'
                       }`}>
                         {value}

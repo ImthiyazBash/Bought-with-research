@@ -85,6 +85,7 @@ const CompanyCard = memo(function CompanyCard({ company, isHovered, onHover }: C
   const locale = pathname.split('/')[1] || 'en';
   const score = getCompanyNachfolgeScore(company);
   const scoreVariant = getScoreVariant(score);
+  const scoreDisplay = score !== null ? `${score.toFixed(1)}/10` : null;
   const yearsSinceChange = company.last_ownership_change_year
     ? new Date().getFullYear() - company.last_ownership_change_year
     : null;
@@ -126,9 +127,13 @@ const CompanyCard = memo(function CompanyCard({ company, isHovered, onHover }: C
                   Google Places
                 </span>
               </Badge>
-            ) : (
+            ) : scoreDisplay ? (
               <Badge variant={scoreVariant}>
-                {t('score.label')}: {score}/10
+                {t('score.label')}: {scoreDisplay}
+              </Badge>
+            ) : (
+              <Badge variant="neutral">
+                {t('score.noScore')}
               </Badge>
             )}
             {company.google_rating && (

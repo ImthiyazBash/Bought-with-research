@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "check-wz-codes": "npx tsx scripts/extract-wz-codes.ts"
+    "check-wz-codes": "npx tsx scripts/extract-wz-codes.ts",
+    "compute-scores": "npx tsx scripts/compute-succession-scores.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",

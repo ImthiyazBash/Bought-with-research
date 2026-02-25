@@ -90,6 +90,7 @@ export default function CompanyPageClient({
 
   const nachfolgeScore = getCompanyNachfolgeScore(company);
   const scoreVariant = getScoreVariant(nachfolgeScore);
+  const scoreDisplay = nachfolgeScore !== null ? `${nachfolgeScore.toFixed(1)}/10` : null;
   const yearsSinceChange = company.last_ownership_change_year
     ? new Date().getFullYear() - company.last_ownership_change_year
     : null;
@@ -157,9 +158,13 @@ export default function CompanyPageClient({
                         Google Places
                       </span>
                     </Badge>
-                  ) : (
+                  ) : scoreDisplay ? (
                     <Badge variant={scoreVariant}>
-                      {t('score.label')}: {nachfolgeScore}/10
+                      {t('score.label')}: {scoreDisplay}
+                    </Badge>
+                  ) : (
+                    <Badge variant="neutral">
+                      {t('score.noScore')}
                     </Badge>
                   )}
                   {company.google_rating && (

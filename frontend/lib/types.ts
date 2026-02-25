@@ -31,6 +31,12 @@ export interface HamburgTarget {
   google_place_id: string | null;
   google_maps_url: string | null;
   business_type: string | null;
+  succession_score: number | null;
+  succession_age_score: number | null;
+  succession_concentration_score: number | null;
+  succession_stability_score: number | null;
+  succession_gap_score: number | null;
+  succession_simplicity_score: number | null;
 }
 
 export interface ShareholderDetail {
@@ -47,8 +53,18 @@ export interface ParsedShareholder {
   age: number | null;
   nachfolgeScore: number; // 1-10 scale
   /** @deprecated Use nachfolgeScore instead */
-  successionRisk: 'high' | 'medium' | 'low';
+  successionRisk: 'high' | 'medium' | 'low' | 'neutral';
   percentage: number | null;
+  isPerson: boolean;
+}
+
+export interface SuccessionScoreBreakdown {
+  total: number | null;
+  ageScore: number;
+  concentrationScore: number;
+  stabilityScore: number;
+  gapScore: number;
+  simplicityScore: number;
 }
 
 export interface CompanyWithCoordinates extends HamburgTarget {

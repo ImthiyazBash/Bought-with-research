@@ -205,7 +205,7 @@ function HomeContent() {
 
       // Nachfolge-Score filter
       const score = getCompanyNachfolgeScore(company);
-      if (score < filters.minNachfolgeScore) {
+      if (score === null || score < filters.minNachfolgeScore) {
         return false;
       }
 
@@ -245,8 +245,8 @@ function HomeContent() {
       }
 
       // Secondary sort: Nachfolge-Score (higher is better)
-      const nachfolgeA = getCompanyNachfolgeScore(a);
-      const nachfolgeB = getCompanyNachfolgeScore(b);
+      const nachfolgeA = getCompanyNachfolgeScore(a) ?? 0;
+      const nachfolgeB = getCompanyNachfolgeScore(b) ?? 0;
       if (nachfolgeB !== nachfolgeA) {
         return nachfolgeB - nachfolgeA;
       }

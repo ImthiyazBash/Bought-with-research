@@ -34,7 +34,7 @@
     "sectorsSelected": "{count} selected",
     "searchSectors": "Search sectors...",
     "minScore": "Minimum Succession Score",
-    "scoreDescription": "Higher scores indicate greater succession opportunity (10 = age 65+, 7-9 = age 55-64, 1-6 = age <55)",
+    "scoreDescription": "5-factor weighted score: owner age (30%), concentration (20%), successor gap (20%), stability (15%), deal simplicity (15%)",
     "allSources": "All Sources",
     "newBatch": "New Batch (82–184)",
     "source": "Data Source"
@@ -42,12 +42,22 @@
   "score": {
     "label": "Succession Score",
     "legend": "Succession Score",
-    "high": "Score 10 (Age 65+)",
-    "medium": "Score 7-9 (Age 55-64)",
-    "low": "Score 1-6 (Age <55)",
+    "high": "High (8-10)",
+    "medium": "Medium (5-7)",
+    "low": "Low (1-4)",
+    "none": "No Score",
+    "noScore": "No Score",
     "indicators": "Succession Score Indicators",
-    "highCount": "{count} Score 10",
-    "mediumCount": "{count} Score 7-9"
+    "highCount": "{count} High (8+)",
+    "mediumCount": "{count} Medium (5-7)",
+    "breakdown": "Score Breakdown",
+    "factors": {
+      "age": "Owner Age",
+      "concentration": "Concentration",
+      "stability": "Stability",
+      "gap": "Successor Gap",
+      "simplicity": "Deal Simplicity"
+    }
   },
   "company": {
     "card": {
