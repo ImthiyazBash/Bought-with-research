@@ -49,10 +49,10 @@ export default function SimilarCompanies({ company }: SimilarCompaniesProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {similar.map((c, i) => (
           <div key={c.id} className="relative">
-            <span className="absolute top-3 right-3 z-10 px-2 py-0.5 text-[10px] font-medium bg-white/90 backdrop-blur-sm text-gray-600 rounded-full border border-gray-200 shadow-sm">
+            <CompanyCard company={c} />
+            <span className="absolute bottom-14 left-3 z-10 px-2 py-0.5 text-[10px] font-medium bg-white/90 backdrop-blur-sm text-gray-600 rounded-full border border-gray-200 shadow-sm">
               {t(reasons[i])}
             </span>
-            <CompanyCard company={c} />
           </div>
         ))}
       </div>
