@@ -388,5 +388,14 @@
       "handelsregister": "Handelsregistereinträge",
       "enrichedAt": "Daten erhoben am"
     }
+  },
+  "similar": {
+    "title": "Ähnliche Unternehmen",
+    "subtitle": "Unternehmen mit ähnlichem Profil und Merkmalen",
+    "sameIndustry": "Gleiche Branche",
+    "similarSize": "Ähnliche Größe",
+    "sameCity": "Gleiche Stadt",
+    "similarScore": "Ähnlicher Score",
+    "similarFinancials": "Ähnliche Finanzen"
   }
 }

@@ -322,3 +322,125 @@ export function getShortAddress(company: HamburgTarget): string {
 export function cn(...classes: (string | boolean | undefined | null)[]): string {
   return classes.filter(Boolean).join(' ');
 }
+
+// ─── Similar Companies ──────────────────────────────────────────────────────
+
+function logScale(a: number | null, b: number | null, maxLog: number): number {
+  if (a == null || b == null || a <= 0 || b <= 0) return 0.3; // neutral when data missing
+  const diff = Math.abs(Math.log10(a) - Math.log10(b));
+  return Math.max(0, 1 - diff / maxLog);
+}
+
+/**
+ * Compute a 0–1 similarity score between two companies.
+ * Higher = more similar.
+ * scoreA/scoreB are pre-computed succession scores to avoid repeated parsing.
+ */
+export function computeSimilarity(
+  source: HamburgTarget,
+  candidate: HamburgTarget,
+  scoreA: number | null,
+  scoreB: number | null,
+): number {
+  // 1. WZ code (industry) — weight 0.30
+  let wzScore = 0;
+  if (source.wz_code && candidate.wz_code) {
+    if (source.wz_code === candidate.wz_code) {
+      wzScore = 1.0;
+    } else {
+      const srcPrefix = source.wz_code.split('.')[0];
+      const candPrefix = candidate.wz_code.split('.')[0];
+      if (srcPrefix === candPrefix) wzScore = 0.6;
+    }
+  }
+
+  // 2. Employee count — weight 0.20
+  const empScore = logScale(
+    source.employee_count ?? null,
+    candidate.employee_count ?? null,
+    Math.log10(500),
+  );
+
+  // 3. Financial band (equity) — weight 0.20
+  const finScore = logScale(
+    source.equity_eur ?? null,
+    candidate.equity_eur ?? null,
+    Math.log10(10_000_000),
+  );
+
+  // 4. City — weight 0.15
+  let cityScore = 0;
+  if (source.address_city && candidate.address_city) {
+    if (source.address_city.toLowerCase() === candidate.address_city.toLowerCase()) {
+      cityScore = 1.0;
+    }
+  }
+
+  // 5. Succession score — weight 0.15
+  let succScore = 0.5; // neutral default
+  if (scoreA !== null && scoreB !== null) {
+    succScore = 1 - Math.abs(scoreA - scoreB) / 10;
+  }
+
+  return (
+    wzScore * 0.30 +
+    empScore * 0.20 +
+    finScore * 0.20 +
+    cityScore * 0.15 +
+    succScore * 0.15
+  );
+}
+
+/**
+ * Determine the primary reason two companies are similar.
+ */
+export function getPrimarySimilarityReason(
+  source: HamburgTarget,
+  candidate: HamburgTarget,
+): 'sameIndustry' | 'similarSize' | 'sameCity' | 'similarScore' | 'similarFinancials' {
+  // Check strongest signals in priority order
+  if (source.wz_code && candidate.wz_code) {
+    const srcPrefix = source.wz_code.split('.')[0];
+    const candPrefix = candidate.wz_code.split('.')[0];
+    if (srcPrefix === candPrefix) return 'sameIndustry';
+  }
+  if (source.address_city && candidate.address_city &&
+      source.address_city.toLowerCase() === candidate.address_city.toLowerCase()) {
+    return 'sameCity';
+  }
+  if (source.employee_count && candidate.employee_count) {
+    const ratio = source.employee_count / candidate.employee_count;
+    if (ratio > 0.5 && ratio < 2.0) return 'similarSize';
+  }
+  if (source.equity_eur && candidate.equity_eur) {
+    return 'similarFinancials';
+  }
+  return 'similarScore';
+}
+
+/**
+ * Get the top N most similar companies, excluding the source.
+ * Pre-computes succession scores once to avoid O(n²) shareholder parsing.
+ */
+export function getSimilarCompanies(
+  source: HamburgTarget,
+  all: HamburgTarget[],
+  limit = 4,
+): HamburgTarget[] {
+  const MIN_THRESHOLD = 0.15;
+
+  // Pre-compute scores once: use DB column if available, skip expensive fallback
+  const sourceScore = source.succession_score ?? null;
+  const scoreMap = new Map<number, number | null>();
+  for (const c of all) {
+    scoreMap.set(c.id, c.succession_score ?? null);
+  }
+
+  return all
+    .filter(c => c.id !== source.id)
+    .map(c => ({ company: c, score: computeSimilarity(source, c, sourceScore, scoreMap.get(c.id) ?? null) }))
+    .filter(({ score }) => score > MIN_THRESHOLD)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map(({ company }) => company);
+}

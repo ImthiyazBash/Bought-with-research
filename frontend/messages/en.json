@@ -388,5 +388,14 @@
       "handelsregister": "Handelsregister Entries",
       "enrichedAt": "Data collected"
     }
+  },
+  "similar": {
+    "title": "Similar Companies",
+    "subtitle": "Companies with similar profile and characteristics",
+    "sameIndustry": "Same industry",
+    "similarSize": "Similar size",
+    "sameCity": "Same city",
+    "similarScore": "Similar score",
+    "similarFinancials": "Similar financials"
   }
 }

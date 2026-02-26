@@ -2,16 +2,15 @@
 
 import { Suspense, useState, useEffect, useMemo } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import { HamburgTarget, FilterState } from '@/lib/types';
 import { getCompanyNachfolgeScore } from '@/lib/utils';
+import { useCompanies } from '@/lib/companies-context';
 import { wzCodeMatchesSelection } from '@/lib/wz-codes';
 import { useTranslations } from '@/lib/i18n-context';
 import CompanyCard from '@/components/CompanyCard';
 import CompanyMap from '@/components/CompanyMap';
 import SearchFilters from '@/components/SearchFilters';
 
-export const dynamic = 'force-dynamic';
 
 const initialFilters: FilterState = {
   searchQuery: '',
@@ -35,8 +34,7 @@ function HomeContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const locale = params.locale as string;
-  const [companies, setCompanies] = useState<HamburgTarget[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { companies, loading: isLoading } = useCompanies();
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterState>(initialFilters);
   const [hoveredCompanyId, setHoveredCompanyId] = useState<number | null>(null);
@@ -111,28 +109,14 @@ function HomeContent() {
     router.replace(newUrl, { scroll: false });
   };
 
-  // Fetch companies from Supabase
+  // Error state handled by CompaniesProvider — clear any stale error
   useEffect(() => {
-    async function fetchCompanies() {
-      try {
-        setIsLoading(true);
-        const { data, error } = await supabase
-          .from('Hamburg Targets')
-          .select('*')
-          .order('company_name', { ascending: true });
-
-        if (error) throw error;
-        setCompanies(data || []);
-      } catch (err) {
-        console.error('Error fetching companies:', err);
-        setError('Failed to load companies. Please check your connection.');
-      } finally {
-        setIsLoading(false);
-      }
+    if (!isLoading && companies.length === 0) {
+      setError('Failed to load companies. Please check your connection.');
+    } else {
+      setError(null);
     }
-
-    fetchCompanies();
-  }, []);
+  }, [isLoading, companies.length]);
 
   // Calculate data completeness score for sorting
   const getCompletenessScore = (company: HamburgTarget): number => {

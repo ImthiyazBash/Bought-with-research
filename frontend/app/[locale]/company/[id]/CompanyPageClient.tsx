@@ -16,6 +16,7 @@ import FinancialCharts from '@/components/FinancialCharts';
 import ShareholderInfo from '@/components/ShareholderInfo';
 import RequestInfoModal from '@/components/RequestInfoModal';
 import CompanyResearch from '@/components/CompanyResearch';
+import SimilarCompanies from '@/components/SimilarCompanies';
 
 export default function CompanyPageClient({
   params,
@@ -381,6 +382,9 @@ export default function CompanyPageClient({
         <div className="mt-8">
           <ShareholderInfo company={company} />
         </div>
+
+        {/* Similar Companies */}
+        <SimilarCompanies company={company} />
 
         {/* Full Width - Company Research */}
         <div className="mt-8">

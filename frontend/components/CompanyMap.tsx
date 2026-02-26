@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { HamburgTarget, CompanyWithCoordinates } from '@/lib/types';
-import { formatCurrency, getCompanyNachfolgeScore, getScoreColor } from '@/lib/utils';
+import { formatCurrency, getScoreColor } from '@/lib/utils';
 import { useTranslations } from '@/lib/i18n-context';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
@@ -132,14 +132,22 @@ export default function CompanyMap({
   useEffect(() => {
     if (!map.current) return;
 
-    // Clear existing markers
-    markersRef.current.forEach((marker) => marker.remove());
+    // Clear existing markers — clone elements to drop all event listeners
+    markersRef.current.forEach((marker) => {
+      const el = marker.getElement();
+      const parent = el.parentNode;
+      if (parent) {
+        const clean = el.cloneNode(false) as HTMLElement;
+        parent.replaceChild(clean, el);
+      }
+      marker.remove();
+    });
     markersRef.current.clear();
 
     companiesWithCoords.forEach((company) => {
       if (!company.latitude || !company.longitude) return;
 
-      const score = getCompanyNachfolgeScore(company);
+      const score = company.succession_score ?? null;
       const color = getScoreColor(score);
 
       // Create custom marker element with wrapper to prevent position shift
