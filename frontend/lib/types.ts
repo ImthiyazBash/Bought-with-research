@@ -89,11 +89,45 @@ export interface FilterState {
   highSuccessionRiskOnly: boolean;
 }
 
+export interface BuyerProfileData {
+  buyerType: 'mbi' | 'financial' | 'strategic' | '';
+  industries: string[];
+  regions: string[];
+  remoteOk: boolean;
+  employees: [number, number];
+  priceRange: [number, number];
+  ebitRange: [number, number];
+  revenueRange: [number, number];
+  equity: string;
+  financing: string[];
+  timeline: string;
+  currentRole: string;
+  yearsExperience: string;
+  yearsLeadership: string;
+  background: string;
+  motivation: string;
+  firmName: string;
+  portfolioCount: string;
+  investmentFocus: string;
+  valueCreation: string;
+  trackRecord: string;
+  companyName: string;
+  companyIndustry: string;
+  companySize: string;
+  companyRevenue: string;
+  strategyRationale: string;
+  maExperience: string;
+  dealStructures: string[];
+  dealBreakers: string;
+  specialRequirements: string;
+}
+
 export interface Profile {
   id: string;
   display_name: string | null;
   created_at: string;
   updated_at: string;
+  buyer_profile: BuyerProfileData | null;
 }
 
 export interface SavedCompany {

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useTranslations } from '@/lib/i18n-context';
+import BuyerProfileModal from '@/components/BuyerProfileModal';
 
 export default function SignUpClient({
   params,
@@ -21,6 +22,7 @@ export default function SignUpClient({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showBuyerProfile, setShowBuyerProfile] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,14 +50,17 @@ export default function SignUpClient({
       }
 
       setSuccess(true);
-      setTimeout(() => {
-        router.push(`/${locale}/auth/signin`);
-      }, 2000);
+      setShowBuyerProfile(true);
     } catch {
       setError(t('error'));
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleBuyerProfileClose = () => {
+    setShowBuyerProfile(false);
+    router.push(`/${locale}/auth/signin`);
   };
 
   return (
@@ -170,6 +175,13 @@ export default function SignUpClient({
           </p>
         </div>
       </div>
+
+      {/* Buyer profile onboarding — auto-opens after successful signup */}
+      <BuyerProfileModal
+        isOpen={showBuyerProfile}
+        onClose={handleBuyerProfileClose}
+        onSave={handleBuyerProfileClose}
+      />
     </div>
   );
 }

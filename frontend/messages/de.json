@@ -202,6 +202,128 @@
     "shareholders": "Gesellschafter",
     "reportYear": "Geschäftsjahr"
   },
+  "buyerProfile": {
+    "modalTitle": "Käuferprofil erstellen",
+    "editProfile": "Käuferprofil bearbeiten",
+    "back": "← Zurück",
+    "next": "Weiter →",
+    "save": "Profil speichern ✓",
+    "stepNames": ["Käufertyp", "Suchprofil", "Finanzielles", "Präferenzen"],
+    "step1": {
+      "title": "Welcher Käufertyp sind Sie?",
+      "subtitle": "Dies bestimmt, welche Informationen wir für ein optimales Matching benötigen.",
+      "types": [
+        { "label": "Management Buy-In", "desc": "Erfahrene Führungskraft, die ein Unternehmen übernehmen und leiten möchte" },
+        { "label": "Finanzinvestor", "desc": "PE, Family Office oder Privatinvestor mit Fokus auf Wertsteigerung" },
+        { "label": "Strategischer Käufer", "desc": "Unternehmen, das durch Zukäufe Synergien und Marktposition stärkt" }
+      ]
+    },
+    "step2": {
+      "title": "Suchprofil",
+      "subtitle": "Definieren Sie Ihre Zielkriterien für die Unternehmenssuche.",
+      "industriesLabel": "Branchen",
+      "regionsLabel": "Regionen",
+      "remoteLabel": "Remote / Homeoffice möglich",
+      "remoteDesc": "Übernahme ohne Standortwechsel denkbar",
+      "employeesLabel": "Mitarbeiterzahl",
+      "industryList": [
+        "Maschinenbau", "Automotive & Zulieferer", "Elektrotechnik", "IT & Software",
+        "Gesundheitswesen", "Pharma & Medizintechnik", "Bau & Handwerk",
+        "Lebensmittel & Getränke", "Logistik & Transport", "Handel (B2B)",
+        "Handel (B2C)", "Energie & Umwelt", "Chemie & Kunststoff", "Metall & Stahl",
+        "Dienstleistungen", "Finanzwesen", "Immobilien", "Sonstige"
+      ]
+    },
+    "step3": {
+      "title": "Finanzielles Profil",
+      "subtitle": "Diese Angaben sind vertraulich und helfen bei der Vorselektion passender Angebote.",
+      "priceRangeLabel": "Kaufpreisrahmen",
+      "ebitLabel": "Mindest-EBIT",
+      "revenueLabel": "Umsatzrahmen",
+      "equityLabel": "Verfügbares Eigenkapital",
+      "equityPlaceholder": "z.B. 500.000",
+      "financingLabel": "Finanzierungsquellen",
+      "timelineLabel": "Akquisitionszeitrahmen",
+      "financingLabels": ["Eigenkapital", "Bankfinanzierung", "Fördermittel (KfW / ERP)", "Co-Investoren", "Verkäuferdarlehen", "Earn-Out"],
+      "financingDescs": ["Eigenmittel verfügbar", "Kreditlinie / Darlehen", "Öffentliche Förderprogramme", "Weitere Kapitalgeber beteiligt", "Teilfinanzierung durch Verkäufer", "Erfolgsabhängige Kaufpreiskomponente"],
+      "timelineOptions": [
+        "Sofort (Aktiv suchend)",
+        "1–3 Monate (Kurzfristig)",
+        "3–6 Monate (Mittelfristig)",
+        "6–12 Monate (Längerfristig)",
+        "12+ Monate (Explorativ)"
+      ]
+    },
+    "step4mbi": {
+      "shortLabel": "Hintergrund",
+      "title": "Ihr Hintergrund",
+      "subtitle": "Verkäufer in der Nachfolge legen großen Wert auf die Person hinter der Übernahme. Diese Angaben stärken Ihr Profil erheblich.",
+      "roleLabel": "Aktuelle Position / Titel",
+      "rolePlaceholder": "z.B. Geschäftsführer, Bereichsleiter, ...",
+      "industryYearsLabel": "Branchenerfahrung (Jahre)",
+      "industryYearsPlaceholder": "z.B. 15",
+      "leadershipYearsLabel": "Führungserfahrung (Jahre)",
+      "leadershipYearsPlaceholder": "z.B. 8",
+      "backgroundLabel": "Beruflicher Werdegang (Kurzfassung)",
+      "backgroundHint": "Relevante Stationen, Branchenkenntnisse und besondere Kompetenzen",
+      "backgroundPlaceholder": "Beschreiben Sie Ihre relevanteste Berufserfahrung...",
+      "motivationLabel": "Motivation für die Übernahme",
+      "motivationHint": "Warum möchten Sie ein Unternehmen übernehmen? Was ist Ihre Vision?",
+      "motivationPlaceholder": "Was treibt Sie an?"
+    },
+    "step4financial": {
+      "shortLabel": "Portfolio",
+      "title": "Investmentprofil",
+      "subtitle": "Informationen zu Ihrem Investmentansatz helfen Verkäufern, Ihr Angebot einzuschätzen.",
+      "firmNameLabel": "Firmenname / Investmentvehikel",
+      "firmNamePlaceholder": "z.B. Muster Capital GmbH",
+      "portfolioCountLabel": "Anzahl Portfoliounternehmen",
+      "portfolioCountPlaceholder": "z.B. 5",
+      "investmentFocusLabel": "Investmentfokus",
+      "investmentFocusHint": "Branchenschwerpunkte, typische Unternehmensgrößen, geographischer Fokus",
+      "valueCreationLabel": "Wertschöpfungsansatz",
+      "valueCreationHint": "Wie unterstützen Sie Portfoliounternehmen nach der Übernahme?",
+      "trackRecordLabel": "Track Record (optional)",
+      "trackRecordHint": "Bisherige Transaktionen und Erfolge"
+    },
+    "step4strategic": {
+      "shortLabel": "Unternehmen",
+      "title": "Ihr Unternehmen",
+      "subtitle": "Als strategischer Käufer sind Informationen zu Ihrem Unternehmen für Verkäufer besonders relevant.",
+      "companyNameLabel": "Firmenname",
+      "companyNamePlaceholder": "z.B. Muster Industrie GmbH",
+      "industryLabel": "Branche",
+      "industryPlaceholder": "z.B. Maschinenbau",
+      "employeesLabel": "Mitarbeiterzahl",
+      "employeesPlaceholder": "z.B. 250",
+      "revenueLabel": "Umsatz (ca.)",
+      "revenuePlaceholder": "z.B. 50.000.000",
+      "strategyLabel": "Strategische Übernahmelogik",
+      "strategyHint": "Welche Synergien oder strategischen Ziele verfolgen Sie mit einer Akquisition?",
+      "maLabel": "Bisherige M&A-Erfahrung (optional)",
+      "maHint": "Anzahl und Art bisheriger Transaktionen"
+    },
+    "step5": {
+      "title": "Übernahmepräferenzen",
+      "subtitle": "Letzte Details, die das Matching optimieren und Ihre Suche verfeinern.",
+      "dealStructureLabel": "Bevorzugte Deal-Struktur",
+      "dealStructureOptions": [
+        "Share Deal", "Asset Deal", "Mehrheitsbeteiligung (>50%)",
+        "Minderheitsbeteiligung", "Vollständige Übernahme (100%)", "Stufenweise Übernahme"
+      ],
+      "dealBreakersLabel": "Ausschlusskriterien",
+      "dealBreakersHint": "Was ist für Sie ein absolutes No-Go? (z.B. Sanierungsfälle, bestimmte Abhängigkeiten)",
+      "specialReqsLabel": "Besondere Anforderungen (optional)",
+      "specialReqsHint": "Gibt es weitere Kriterien, die für Sie entscheidend sind?",
+      "specialReqsPlaceholder": "z.B. Nachfolgeregelung mit Übergangsphase gewünscht...",
+      "bannerTitle": "Profil fast fertig",
+      "bannerText": "Nach dem Speichern erhalten Sie sofort passende Unternehmensvorschläge basierend auf Ihrem Profil."
+    },
+    "completion": {
+      "title": "Käuferprofil gespeichert",
+      "subtitle": "Wir analysieren jetzt Ihr Profil und senden Ihnen passende Unternehmensvorschläge. Sie können Ihr Profil jederzeit in den Einstellungen anpassen."
+    }
+  },
   "research": {
     "title": "Unternehmensrecherche",
     "subtitle": "Website-Analyse, Medienberichte und Gesellschafter-Hintergrundprüfung",

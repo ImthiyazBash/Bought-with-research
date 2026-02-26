@@ -202,6 +202,128 @@
     "shareholders": "Shareholders",
     "reportYear": "Report Year"
   },
+  "buyerProfile": {
+    "modalTitle": "Create Buyer Profile",
+    "editProfile": "Edit Buyer Profile",
+    "back": "← Back",
+    "next": "Next →",
+    "save": "Save Profile ✓",
+    "stepNames": ["Buyer Type", "Search Profile", "Financials", "Preferences"],
+    "step1": {
+      "title": "What type of buyer are you?",
+      "subtitle": "This determines what information we need for optimal matching.",
+      "types": [
+        { "label": "Management Buy-In", "desc": "Experienced executive looking to acquire and lead a company" },
+        { "label": "Financial Investor", "desc": "PE, Family Office, or private investor focused on value creation" },
+        { "label": "Strategic Buyer", "desc": "Company looking to strengthen synergies and market position through acquisitions" }
+      ]
+    },
+    "step2": {
+      "title": "Search Profile",
+      "subtitle": "Define your target criteria for the company search.",
+      "industriesLabel": "Industries",
+      "regionsLabel": "Regions",
+      "remoteLabel": "Remote / Home Office possible",
+      "remoteDesc": "Acquisition without relocation feasible",
+      "employeesLabel": "Employee count",
+      "industryList": [
+        "Mechanical Engineering", "Automotive & Suppliers", "Electrical Engineering", "IT & Software",
+        "Healthcare", "Pharma & Medical Technology", "Construction & Trades",
+        "Food & Beverages", "Logistics & Transport", "Trade (B2B)",
+        "Trade (B2C)", "Energy & Environment", "Chemicals & Plastics", "Metal & Steel",
+        "Services", "Finance", "Real Estate", "Other"
+      ]
+    },
+    "step3": {
+      "title": "Financial Profile",
+      "subtitle": "This information is confidential and helps pre-select suitable offers.",
+      "priceRangeLabel": "Purchase price range",
+      "ebitLabel": "Minimum EBIT",
+      "revenueLabel": "Revenue range",
+      "equityLabel": "Available equity",
+      "equityPlaceholder": "e.g. 500,000",
+      "financingLabel": "Financing sources",
+      "timelineLabel": "Acquisition timeline",
+      "financingLabels": ["Equity", "Bank financing", "Subsidies (KfW / ERP)", "Co-investors", "Seller financing", "Earn-Out"],
+      "financingDescs": ["Own funds available", "Credit line / loan", "Public funding programs", "Additional capital providers", "Partial financing by seller", "Performance-based purchase price"],
+      "timelineOptions": [
+        "Immediately (Actively searching)",
+        "1–3 months (Short-term)",
+        "3–6 months (Medium-term)",
+        "6–12 months (Longer-term)",
+        "12+ months (Exploratory)"
+      ]
+    },
+    "step4mbi": {
+      "shortLabel": "Background",
+      "title": "Your Background",
+      "subtitle": "Sellers place great value on the person behind the acquisition. This information significantly strengthens your profile.",
+      "roleLabel": "Current Position / Title",
+      "rolePlaceholder": "e.g. Managing Director, Department Head, ...",
+      "industryYearsLabel": "Industry experience (years)",
+      "industryYearsPlaceholder": "e.g. 15",
+      "leadershipYearsLabel": "Leadership experience (years)",
+      "leadershipYearsPlaceholder": "e.g. 8",
+      "backgroundLabel": "Professional background (summary)",
+      "backgroundHint": "Relevant positions, industry expertise and special competencies",
+      "backgroundPlaceholder": "Describe your most relevant professional experience...",
+      "motivationLabel": "Motivation for the acquisition",
+      "motivationHint": "Why do you want to acquire a company? What is your vision?",
+      "motivationPlaceholder": "What drives you?"
+    },
+    "step4financial": {
+      "shortLabel": "Portfolio",
+      "title": "Investment Profile",
+      "subtitle": "Information about your investment approach helps sellers assess your offer.",
+      "firmNameLabel": "Company name / Investment vehicle",
+      "firmNamePlaceholder": "e.g. Example Capital GmbH",
+      "portfolioCountLabel": "Number of portfolio companies",
+      "portfolioCountPlaceholder": "e.g. 5",
+      "investmentFocusLabel": "Investment focus",
+      "investmentFocusHint": "Industry focus, typical company sizes, geographic focus",
+      "valueCreationLabel": "Value creation approach",
+      "valueCreationHint": "How do you support portfolio companies after acquisition?",
+      "trackRecordLabel": "Track record (optional)",
+      "trackRecordHint": "Previous transactions and successes"
+    },
+    "step4strategic": {
+      "shortLabel": "Company",
+      "title": "Your Company",
+      "subtitle": "As a strategic buyer, information about your company is particularly relevant to sellers.",
+      "companyNameLabel": "Company name",
+      "companyNamePlaceholder": "e.g. Example Industries Ltd",
+      "industryLabel": "Industry",
+      "industryPlaceholder": "e.g. Mechanical Engineering",
+      "employeesLabel": "Number of employees",
+      "employeesPlaceholder": "e.g. 250",
+      "revenueLabel": "Revenue (approx.)",
+      "revenuePlaceholder": "e.g. 50,000,000",
+      "strategyLabel": "Strategic acquisition rationale",
+      "strategyHint": "What synergies or strategic goals do you pursue with an acquisition?",
+      "maLabel": "Previous M&A experience (optional)",
+      "maHint": "Number and type of previous transactions"
+    },
+    "step5": {
+      "title": "Acquisition Preferences",
+      "subtitle": "Final details to optimize matching and refine your search.",
+      "dealStructureLabel": "Preferred deal structure",
+      "dealStructureOptions": [
+        "Share Deal", "Asset Deal", "Majority stake (>50%)",
+        "Minority stake", "Full acquisition (100%)", "Staged acquisition"
+      ],
+      "dealBreakersLabel": "Deal breakers",
+      "dealBreakersHint": "What is an absolute no-go for you? (e.g. turnaround cases, specific dependencies)",
+      "specialReqsLabel": "Special requirements (optional)",
+      "specialReqsHint": "Are there any other criteria decisive for you?",
+      "specialReqsPlaceholder": "e.g. Transition period with seller preferred...",
+      "bannerTitle": "Profile almost complete",
+      "bannerText": "After saving, you will immediately receive matching company suggestions based on your profile."
+    },
+    "completion": {
+      "title": "Buyer Profile Saved",
+      "subtitle": "We are now analysing your profile and will send you matching company suggestions. You can adjust your profile at any time in the settings."
+    }
+  },
   "research": {
     "title": "Company Research",
     "subtitle": "Website crawl, media mentions, and shareholder background checks",
