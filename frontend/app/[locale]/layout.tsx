@@ -4,7 +4,6 @@ import { I18nProvider } from '@/lib/i18n-context';
 import { AuthProvider } from '@/lib/auth-context';
 import { SavedCompaniesProvider } from '@/lib/saved-companies-context';
 import { ComparisonProvider } from '@/lib/comparison-context';
-import { CompaniesProvider } from '@/lib/companies-context';
 import Nav from '@/components/Nav';
 import ComparisonBar from '@/components/ComparisonBar';
 
@@ -35,17 +34,15 @@ export default async function LocaleLayout({
   return (
     <I18nProvider messages={messages}>
       <AuthProvider>
-        <CompaniesProvider>
-          <SavedCompaniesProvider>
-            <ComparisonProvider>
-              <Nav locale={locale} />
-              <main className="pt-16">
-                {children}
-              </main>
-              <ComparisonBar />
-            </ComparisonProvider>
-          </SavedCompaniesProvider>
-        </CompaniesProvider>
+        <SavedCompaniesProvider>
+          <ComparisonProvider>
+            <Nav locale={locale} />
+            <main className="pt-16">
+              {children}
+            </main>
+            <ComparisonBar />
+          </ComparisonProvider>
+        </SavedCompaniesProvider>
       </AuthProvider>
     </I18nProvider>
   );

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { HamburgTarget } from '@/lib/types';
@@ -12,11 +13,13 @@ import { useAuth } from '@/lib/auth-context';
 import { useSavedCompanies } from '@/lib/saved-companies-context';
 import MetricCard from '@/components/ui/MetricCard';
 import Badge from '@/components/ui/Badge';
-import FinancialCharts from '@/components/FinancialCharts';
-import ShareholderInfo from '@/components/ShareholderInfo';
 import RequestInfoModal from '@/components/RequestInfoModal';
-import CompanyResearch from '@/components/CompanyResearch';
-import SimilarCompanies from '@/components/SimilarCompanies';
+
+// Lazy-load heavy components to reduce initial bundle and dev compilation pressure
+const FinancialCharts = dynamic(() => import('@/components/FinancialCharts'), { ssr: false });
+const ShareholderInfo = dynamic(() => import('@/components/ShareholderInfo'), { ssr: false });
+const CompanyResearch = dynamic(() => import('@/components/CompanyResearch'), { ssr: false });
+const SimilarCompanies = dynamic(() => import('@/components/SimilarCompanies'), { ssr: false });
 
 export default function CompanyPageClient({
   params,

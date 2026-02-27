@@ -1,10 +1,10 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { HamburgTarget } from '@/lib/types';
 import { getSimilarCompanies, getPrimarySimilarityReason } from '@/lib/utils';
 import { useTranslations } from '@/lib/i18n-context';
-import { useCompanies } from '@/lib/companies-context';
+import { supabase } from '@/lib/supabase';
 import CompanyCard from './CompanyCard';
 
 interface SimilarCompaniesProps {
@@ -13,7 +13,54 @@ interface SimilarCompaniesProps {
 
 export default function SimilarCompanies({ company }: SimilarCompaniesProps) {
   const t = useTranslations('similar');
-  const { companies: allCompanies, loading } = useCompanies();
+  const [allCompanies, setAllCompanies] = useState<HamburgTarget[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function fetchCandidates() {
+      try {
+        // Only fetch potential matches — same city or same WZ prefix, not all 184
+        const wzPrefix = company.wz_code?.split('.')[0] ?? '';
+        const city = company.address_city ?? '';
+
+        const queries = [];
+        if (wzPrefix) {
+          queries.push(
+            supabase.from('Hamburg Targets').select('*')
+              .like('wz_code', `${wzPrefix}%`).neq('id', company.id).limit(10)
+          );
+        }
+        if (city) {
+          queries.push(
+            supabase.from('Hamburg Targets').select('*')
+              .eq('address_city', city).neq('id', company.id).limit(10)
+          );
+        }
+
+        const results = await Promise.all(queries);
+        if (cancelled) return;
+
+        // Merge and deduplicate
+        const seen = new Set<number>();
+        const candidates: HamburgTarget[] = [];
+        for (const { data } of results) {
+          if (data) {
+            for (const c of data as HamburgTarget[]) {
+              if (!seen.has(c.id)) { seen.add(c.id); candidates.push(c); }
+            }
+          }
+        }
+        setAllCompanies(candidates);
+      } catch (err) {
+        console.error('SimilarCompanies fetch exception:', err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    fetchCandidates();
+    return () => { cancelled = true; };
+  }, [company.id, company.wz_code, company.address_city]);
 
   const similar = useMemo(
     () => (allCompanies.length > 0 ? getSimilarCompanies(company, allCompanies, 4) : []),

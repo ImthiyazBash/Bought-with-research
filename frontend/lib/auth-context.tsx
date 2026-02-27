@@ -37,7 +37,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Force-resolve loading after 3s to prevent stale token hangs
+    const timeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      clearTimeout(timeout);
+      if (error) {
+        console.error('Auth session error:', error);
+        supabase.auth.signOut(); // Clear stale tokens
+        setIsLoading(false);
+        return;
+      }
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -48,6 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
+        clearTimeout(timeout);
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
@@ -59,7 +72,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      clearTimeout(timeout);
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signOut = async () => {
